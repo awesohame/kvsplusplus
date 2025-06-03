@@ -33,10 +33,14 @@ namespace kvcpp {
             ValueObject(ValueObject&& other) noexcept = default;
             ValueObject& operator=(ValueObject&& other) noexcept = default;
             // Destructor
-            ~ValueObject() = default;
-
-            // Get an attribute value by name (returns nullptr if not found)
+            ~ValueObject() = default;            // Get an attribute value by name (returns nullptr if not found)
             const AttributeValue* getAttribute(const std::string& attributeName) const;
+
+            // Set an attribute with type validation
+            void setAttribute(const std::string& attributeName, const std::string& value);
+            void setAttribute(const std::string& attributeName, int value);
+            void setAttribute(const std::string& attributeName, double value);
+            void setAttribute(const std::string& attributeName, bool value);
 
             // Check if an attribute exists
             bool hasAttribute(const std::string& attributeName) const;

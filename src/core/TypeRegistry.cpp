@@ -1,7 +1,5 @@
 #include "kvstore/core/TypeRegistry.hpp"
 #include "kvstore/exceptions/Exceptions.hpp"
-#include <stdexcept>
-#include <sstream>
 
 namespace kvcpp {
     namespace core {
@@ -12,17 +10,15 @@ namespace kvcpp {
         }
 
         void TypeRegistry::validateAndRegisterType(const std::string& attributeName, AttributeType type) {
-            std::lock_guard<std::mutex> lock(mtx);
-
-            auto it = attributeTypes_.find(attributeName);
+            std::lock_guard<std::mutex> lock(mtx);            auto it = attributeTypes_.find(attributeName);
             if(it != attributeTypes_.end()) {
                 // Attribute already exists, check if types match
                 if(it->second != type) {
-                    std::ostringstream oss;
-                    oss << "Type mismatch for attribute '" << attributeName
-                        << "'. Expected: " << getTypeName(it->second)
-                        << ", but got: " << getTypeName(type);
-                    throw std::runtime_error(oss.str());
+                    throw kvcpp::exceptions::TypeMismatchException(
+                        attributeName,
+                        getTypeName(it->second),
+                        getTypeName(type)
+                    );
                 }
             }
             else {
@@ -60,8 +56,8 @@ namespace kvcpp {
                 return AttributeType::BOOLEAN;
             }
 
-            // this should never happen if AttributeValue is properly defined
-            throw std::runtime_error("Unknown attribute value type");
+// this should never happen if AttributeValue is properly defined
+            throw kvcpp::exceptions::InvalidValueException("unknown", "valid AttributeValue variant");
         }
 
         std::string TypeRegistry::getTypeName(AttributeType type) {
