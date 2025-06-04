@@ -15,7 +15,7 @@ int main(int argc, char* argv[]) {
             return 1;
         }
 
-        kvcpp::cli::CLI cli;
+        kvspp::cli::CLI cli;
 
         // Parse command line options and build command vector
         std::vector<std::string> command;

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.16)
 
 # Project name and language standard
-project(kvc++ VERSION 1.0 LANGUAGES CXX)
+project(kvs++ VERSION 1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
@@ -27,23 +27,26 @@ file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS
 add_library(kvstore STATIC ${LIB_SOURCES})
 
 # Executable 1: Test suite entry point
-add_executable(kvcpp-test src/tests_main.cpp)
-target_link_libraries(kvcpp-test kvstore)
+add_executable(kvspp-test src/tests_main.cpp)
+target_link_libraries(kvspp-test kvstore)
 
 # Executable 2: Single command CLI 
-add_executable(kvcpp src/single_cmd_main.cpp)
-target_link_libraries(kvcpp kvstore)
+add_executable(kvspp src/single_cmd_main.cpp)
+target_link_libraries(kvspp kvstore)
 
 # Executable 3: Interactive CLI
-add_executable(kvcpp-cli src/cli_main.cpp)
-target_link_libraries(kvcpp-cli kvstore)
+add_executable(kvspp-cli src/cli_main.cpp)
+target_link_libraries(kvspp-cli kvstore)
 
 # Executable 4: Demo application
-add_executable(kvcpp-demo src/demo_main.cpp)
-target_link_libraries(kvcpp-demo kvstore)
+add_executable(kvspp-demo src/demo_main.cpp)
+target_link_libraries(kvspp-demo kvstore)
 
 # Set up linking for all executables
-set(ALL_TARGETS kvcpp-test kvcpp kvcpp-cli kvcpp-demo)
+set(ALL_TARGETS kvspp-test kvspp kvspp-cli kvspp-demo)
+
+# Set up linking for all executables
+set(ALL_TARGETS kvspp-test kvspp kvspp-cli kvspp-demo)
 
 foreach(target ${ALL_TARGETS})
     # make sure MinGW doesn't complain about missing entry points

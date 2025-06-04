@@ -9,7 +9,7 @@
  */
 int main(int argc, char* argv[]) {
     try {
-        kvcpp::cli::CLI cli;
+        kvspp::cli::CLI cli;
 
         // Parse command line options
         bool verbose = false;
