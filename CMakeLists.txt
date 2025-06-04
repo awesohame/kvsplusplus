@@ -15,28 +15,52 @@ set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 # Include all header directories
 include_directories(include)
 
-# Collect all source files
-file(GLOB_RECURSE SOURCES CONFIGURE_DEPENDS
-    src/*.cpp
+# Collect library source files (excluding main files)
+file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS
+    src/core/*.cpp
+    src/persistence/*.cpp
+    src/utils/*.cpp
+    src/cli/*.cpp
 )
 
-# Add the executable
-add_executable(kvc++ ${SOURCES})
+# Create a static library for the core functionality
+add_library(kvstore STATIC ${LIB_SOURCES})
 
-# make sure MinGW doesn't complain about missing entry points
-if (MINGW)
-    target_link_libraries(kvc++ stdc++fs)
-endif()
+# Executable 1: Test suite entry point
+add_executable(kvcpp-test src/tests_main.cpp)
+target_link_libraries(kvcpp-test kvstore)
 
-# Link with pthread if needed (for thread safety in the store)
-if (UNIX OR MINGW)
-    find_package(Threads REQUIRED)
-    target_link_libraries(kvc++ Threads::Threads)
-endif()
+# Executable 2: Single command CLI 
+add_executable(kvcpp src/single_cmd_main.cpp)
+target_link_libraries(kvcpp kvstore)
 
-# Set compile warnings
-if (MSVC)
-    target_compile_options(kvc++ PRIVATE /W4 /WX)
-else()
-    target_compile_options(kvc++ PRIVATE -Wall -Wextra -pedantic -Werror)
-endif()
+# Executable 3: Interactive CLI
+add_executable(kvcpp-cli src/cli_main.cpp)
+target_link_libraries(kvcpp-cli kvstore)
+
+# Executable 4: Demo application
+add_executable(kvcpp-demo src/demo_main.cpp)
+target_link_libraries(kvcpp-demo kvstore)
+
+# Set up linking for all executables
+set(ALL_TARGETS kvcpp-test kvcpp kvcpp-cli kvcpp-demo)
+
+foreach(target ${ALL_TARGETS})
+    # make sure MinGW doesn't complain about missing entry points
+    if (MINGW)
+        target_link_libraries(${target} stdc++fs)
+    endif()
+
+    # Link with pthread if needed (for thread safety in the store)
+    if (UNIX OR MINGW)
+        find_package(Threads REQUIRED)
+        target_link_libraries(${target} Threads::Threads)
+    endif()
+
+    # Set compile warnings
+    if (MSVC)
+        target_compile_options(${target} PRIVATE /W4 /WX)
+    else()
+        target_compile_options(${target} PRIVATE -Wall -Wextra -pedantic -Werror)
+    endif()
+endforeach()
