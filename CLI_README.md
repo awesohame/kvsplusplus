@@ -1,14 +1,14 @@
-# KVC++ CLI Documentation
+# KVS++ CLI Documentation
 
 ## Overview
 
-The KVC++ project now includes comprehensive CLI tools for interacting with the in-memory key-value store. The implementation provides three main executables:
+The KVS++ project now includes comprehensive CLI tools for interacting with the in-memory key-value store. The implementation provides three main executables:
 
 ## Executables
 
-### 1. `kvcpp.exe` - Single Command CLI
+### 1. `kvspp.exe` - Single Command CLI
 **Purpose**: Execute single commands for scripting and automation
-**Usage**: `kvcpp [OPTIONS] <command> [args...]`
+**Usage**: `kvspp [OPTIONS] <command> [args...]`
 
 #### Options
 - `-h, --help`: Show help message
@@ -20,24 +20,24 @@ The KVC++ project now includes comprehensive CLI tools for interacting with the 
 #### Examples
 ```powershell
 # Store a new entry
-.\build\bin\kvcpp.exe put user1 name:John age:25 active:true
+.\build\bin\kvspp.exe put user1 name:John age:25 active:true
 
 # Get an entry
-.\build\bin\kvcpp.exe get user1
+.\build\bin\kvspp.exe get user1
 
 # Search for entries
-.\build\bin\kvcpp.exe search age 25
+.\build\bin\kvspp.exe search age 25
 
 # JSON output for scripting
-.\build\bin\kvcpp.exe --json keys
+.\build\bin\kvspp.exe --json keys
 
 # Use custom store file
-.\build\bin\kvcpp.exe -f mystore.json keys
+.\build\bin\kvspp.exe -f mystore.json keys
 ```
 
-### 2. `kvcpp-cli.exe` - Interactive CLI
+### 2. `kvspp-cli.exe` - Interactive CLI
 **Purpose**: Interactive REPL-style interface for exploration and development
-**Usage**: `kvcpp-cli [OPTIONS]`
+**Usage**: `kvspp-cli [OPTIONS]`
 
 #### Features
 - Interactive command prompt
@@ -48,30 +48,30 @@ The KVC++ project now includes comprehensive CLI tools for interacting with the 
 
 #### Example Session
 ```
-=== Welcome to KVC++ Store CLI ===
-kvc++ > put course title:"Webdev" level:beginner duration:20
+=== Welcome to KVS++ Store CLI ===
+kvs++ > put course title:"Webdev" level:beginner duration:20
 [SUCCESS] Successfully stored key 'course' with 3 attributes
 
-kvc++ > get course
+kvs++ > get course
 course -> title: Webdev, level: beginner, duration: 20
 
-kvc++ > search level beginner
+kvs++ > search level beginner
 [INFO] Found 1 keys:
   course
 
-kvc++ > exit
+kvs++ > exit
 [INFO] Goodbye!
 ```
 
-### 3. `kvcpp-demo.exe` - Demo Application
+### 3. `kvspp-demo.exe` - Demo Application
 **Purpose**: Showcase functionality with sample data
-**Usage**: `kvcpp-demo`
+**Usage**: `kvspp-demo`
 
 Creates sample e-commerce course data and user profiles, demonstrates all core functionality, and saves demo data to `store/demo_store.json`.
 
-### 4. `kvcpp-test.exe` - Test Suite
+### 4. `kvspp-test.exe` - Test Suite
 **Purpose**: Run the comprehensive test suite
-**Usage**: `kvcpp-test`
+**Usage**: `kvspp-test`
 
 ## Available Commands
 
@@ -154,11 +154,11 @@ foreach ($user in $premiumUsers) {
 ### Custom Store Management
 ```powershell
 # Create a custom store for different data
-.\build\bin\kvcpp.exe -f products.json put product1 name:"Laptop" price:999.99 stock:50
-.\build\bin\kvcpp.exe -f products.json put product2 name:"Mouse" price:29.99 stock:200
+.\build\bin\kvspp.exe -f products.json put product1 name:"Laptop" price:999.99 stock:50
+.\build\bin\kvspp.exe -f products.json put product2 name:"Mouse" price:29.99 stock:200
 
 # List products
-.\build\bin\kvcpp.exe -f products.json keys
+.\build\bin\kvspp.exe -f products.json keys
 ```
 
 ## Architecture Highlights
@@ -184,16 +184,16 @@ The CLI provides user-friendly error messages for common scenarios:
 
 ```
 # Type mismatch
-kvc++ > put user1 age:25
-kvc++ > put user2 age:notanumber
+kvs++ > put user1 age:25
+kvs++ > put user2 age:notanumber
 [ERROR] KVStore Error: Type mismatch for attribute 'age': expected integer, got string
 
 # Key not found
-kvc++ > get nonexistent
+kvs++ > get nonexistent
 [ERROR] Key 'nonexistent' not found
 
 # Invalid command syntax
-kvc++ > put user1
+kvs++ > put user1
 [ERROR] Usage: put <key> <attr1:value1> [attr2:value2] ...
 ```
 
@@ -231,10 +231,10 @@ cd d:\Programming\cpp\kvcplusplus
 cmake --build build --clean-first
 
 # All executables will be in build/bin/
-# - kvcpp.exe (single command)
-# - kvcpp-cli.exe (interactive)
-# - kvcpp-demo.exe (demo)
-# - kvcpp-test.exe (test suite)
+# - kvspp.exe (single command)
+# - kvspp-cli.exe (interactive)
+# - kvspp-demo.exe (demo)
+# - kvspp-test.exe (test suite)
 ```
 
-The KVC++ CLI implementation provides a production-ready interface for the Redis-like key-value store with comprehensive features for both interactive use and automation scripting.
+The KVS++ CLI implementation provides a production-ready interface for the Redis-like key-value store with comprehensive features for both interactive use and automation scripting.

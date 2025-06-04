@@ -7,7 +7,7 @@
 #include <memory>
 #include "ValueObject.hpp"
 
-namespace kvcpp {
+namespace kvspp {
     namespace core {
 
         /**

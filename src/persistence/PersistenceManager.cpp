@@ -7,7 +7,7 @@
 #include <algorithm>
 #include <cctype>
 
-namespace kvcpp {
+namespace kvspp {
     namespace persistence {
 
         PersistenceManager::PersistenceManager(const std::string& filePath)

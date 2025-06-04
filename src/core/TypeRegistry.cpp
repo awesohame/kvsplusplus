@@ -1,7 +1,7 @@
 #include "kvstore/core/TypeRegistry.hpp"
 #include "kvstore/exceptions/Exceptions.hpp"
 
-namespace kvcpp {
+namespace kvspp {
     namespace core {
 
         TypeRegistry& TypeRegistry::getInstance() {
@@ -14,7 +14,7 @@ namespace kvcpp {
             if(it != attributeTypes_.end()) {
                 // Attribute already exists, check if types match
                 if(it->second != type) {
-                    throw kvcpp::exceptions::TypeMismatchException(
+                    throw kvspp::exceptions::TypeMismatchException(
                         attributeName,
                         getTypeName(it->second),
                         getTypeName(type)
@@ -54,10 +54,8 @@ namespace kvcpp {
             }
             else if(std::holds_alternative<bool>(value)) {
                 return AttributeType::BOOLEAN;
-            }
-
-// this should never happen if AttributeValue is properly defined
-            throw kvcpp::exceptions::InvalidValueException("unknown", "valid AttributeValue variant");
+            }            // this should never happen if AttributeValue is properly defined
+            throw kvspp::exceptions::InvalidValueException("unknown", "valid AttributeValue variant");
         }
 
         std::string TypeRegistry::getTypeName(AttributeType type) {

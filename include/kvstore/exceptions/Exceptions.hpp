@@ -3,7 +3,7 @@
 #include <stdexcept>
 #include <string>
 
-namespace kvcpp {
+namespace kvspp {
     namespace exceptions {
 
         /**

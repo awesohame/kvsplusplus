@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <variant>
 
-namespace kvcpp {
+namespace kvspp {
     namespace core {
 
         const ValueObject* KeyValueStore::get(const std::string& key) const {

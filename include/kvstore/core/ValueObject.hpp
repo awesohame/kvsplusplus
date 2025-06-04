@@ -6,7 +6,7 @@
 #include <vector>
 #include <utility>
 
-namespace kvcpp {
+namespace kvspp {
     namespace core {
 
         using AttributeValue = std::variant<std::string, int, double, bool>;

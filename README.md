@@ -1,6 +1,6 @@
-# KVC++ (Key Value Cache++)
+# KVS++ (Key Value Store++)
 
-A high-performance, thread-safe, in-memory key-value store with Redis-like functionality, implemented in modern C++. KVC++ provides a robust foundation for caching, session storage, and fast data retrieval with comprehensive CLI tools for both interactive use and automation.
+A high-performance, thread-safe, in-memory key-value store with Redis-like functionality, implemented in modern C++. KVS++ provides a robust foundation for caching, session storage, and fast data retrieval with comprehensive CLI tools for both interactive use and automation.
 
 ## Features
 
@@ -44,18 +44,18 @@ cmake --build . --config Release
 
 ```powershell
 # Interactive mode
-.\build\bin\kvcpp-cli.exe
+.\build\bin\kvspp-cli.exe
 
 # Single commands
-.\build\bin\kvcpp.exe put user1 name:John age:25 active:true
-.\build\bin\kvcpp.exe get user1
-.\build\bin\kvcpp.exe search age 25
+.\build\bin\kvspp.exe put user1 name:John age:25 active:true
+.\build\bin\kvspp.exe get user1
+.\build\bin\kvspp.exe search age 25
 
 # Run demo
-.\build\bin\kvcpp-demo.exe
+.\build\bin\kvspp-demo.exe
 
 # Run tests
-.\build\bin\kvcpp-test.exe
+.\build\bin\kvspp-test.exe
 ```
 
 ## Architecture
@@ -89,10 +89,10 @@ kvcplusplus/
 
 | Executable | Purpose | Use Case |
 |------------|---------|----------|
-| `kvcpp.exe` | Single command CLI | Scripting, automation, CI/CD |
-| `kvcpp-cli.exe` | Interactive CLI | Use tool through CLI |
-| `kvcpp-demo.exe` | Demo application | Feature showcase, sample data |
-| `kvcpp-test.exe` | Test suite | for devs (development testing) |
+| `kvspp.exe` | Single command CLI | Scripting, automation, CI/CD |
+| `kvspp-cli.exe` | Interactive CLI | Use tool through CLI |
+| `kvspp-demo.exe` | Demo application | Feature showcase, sample data |
+| `kvspp-test.exe` | Test suite | for devs (development testing) |
 
 ## Documentation
 
@@ -106,7 +106,7 @@ kvcplusplus/
 Perfect for automation and scripting:
 ```powershell
 # Get structured data for processing
-$userData = .\build\bin\kvcpp.exe --json get user1 | ConvertFrom-Json
+$userData = .\build\bin\kvspp.exe --json get user1 | ConvertFrom-Json
 Write-Host "User age: $($userData.age)"
 ```
 
@@ -114,16 +114,16 @@ Write-Host "User age: $($userData.age)"
 Multiple isolated stores:
 ```powershell
 # Use different stores for different purposes
-.\build\bin\kvcpp.exe -f products.json put laptop price:999.99 stock:50
-.\build\bin\kvcpp.exe -f users.json put user1 name:John role:admin
+.\build\bin\kvspp.exe -f products.json put laptop price:999.99 stock:50
+.\build\bin\kvspp.exe -f users.json put user1 name:John role:admin
 ```
 
 ### Batch Operations
 Load and process data efficiently:
 ```powershell
 # Load demo data and process
-.\build\bin\kvcpp.exe load store/demo_store.json
-$premiumUsers = .\build\bin\kvcpp.exe --json search premium true | ConvertFrom-Json
+.\build\bin\kvspp.exe load store/demo_store.json
+$premiumUsers = .\build\bin\kvspp.exe --json search premium true | ConvertFrom-Json
 ```
 
 ## Use Cases

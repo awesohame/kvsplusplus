@@ -13,7 +13,7 @@
 #include <unistd.h>
 #endif
 
-namespace kvcpp {
+namespace kvspp {
     namespace cli {
 
         CLI::CLI(const std::string& defaultStoreFile)
@@ -438,7 +438,7 @@ namespace kvcpp {
                 return 0;
             }
 
-            std::cout << ColorOutput::bold("=== KVC++ Store CLI Help ===") << std::endl << std::endl;
+            std::cout << ColorOutput::bold("=== KVS++ Store CLI Help ===") << std::endl << std::endl;
 
             std::cout << ColorOutput::green("Data Operations:") << std::endl;
             std::cout << "  " << ColorOutput::cyan("get <key>") << "                     - Get value for a key" << std::endl;
@@ -476,7 +476,7 @@ namespace kvcpp {
         void CLI::printWelcome() {
             if(jsonMode_) return;
 
-            std::cout << ColorOutput::bold("=== Welcome to KVC++ Store CLI ===") << std::endl;
+            std::cout << ColorOutput::bold("=== Welcome to KVS++ Store CLI ===") << std::endl;
             std::cout << "Type " << ColorOutput::cyan("help") << " for available commands or "
                 << ColorOutput::cyan("exit") << " to quit." << std::endl;
             std::cout << "Store file: " << ColorOutput::yellow(defaultStoreFile_) << std::endl;
@@ -484,7 +484,7 @@ namespace kvcpp {
             std::cout << std::endl;
         }        void CLI::printPrompt() {
             if(jsonMode_) return;
-            std::cout << ColorOutput::green("kvc++ > ");
+            std::cout << ColorOutput::green("kvs++ > ");
         }
 
         void CLI::printError(const std::string& message) {

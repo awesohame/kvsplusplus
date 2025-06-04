@@ -5,7 +5,7 @@
 #include <stdexcept>
 #include <regex>
 
-namespace kvcpp {
+namespace kvspp {
     namespace core {
         ValueObject::ValueObject(const std::vector<AttributePair>& attributePairs) {
             for(const auto& pair : attributePairs) {

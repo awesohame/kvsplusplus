@@ -6,7 +6,7 @@
 #include <iostream>
 #include "kvstore/core/KeyValueStore.hpp"
 
-namespace kvcpp {
+namespace kvspp {
     namespace cli {
 
         /**

@@ -7,7 +7,7 @@
 #include <memory>
 #include <mutex>
 
-namespace kvcpp {
+namespace kvspp {
     namespace persistence {
 
         /**
