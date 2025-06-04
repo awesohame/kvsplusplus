@@ -1,6 +1,7 @@
 #include "kvstore/core/KeyValueStore.hpp"
 #include "kvstore/exceptions/Exceptions.hpp"
 #include "kvstore/core/TypeRegistry.hpp"
+#include "kvstore/persistence/PersistenceManager.hpp"
 #include <algorithm>
 #include <variant>
 
@@ -35,9 +36,7 @@ namespace kvcpp {
             }
 
             return result;
-        }
-
-        void KeyValueStore::put(const std::string& key,
+        }        void KeyValueStore::put(const std::string& key,
             const std::vector<std::pair<std::string, std::string>>& attributePairs) {
             std::lock_guard<std::mutex> lock(mtx_);
 
@@ -46,6 +45,11 @@ namespace kvcpp {
 
             // Store the object
             store_[key] = std::move(valueObject);
+        }
+
+        void KeyValueStore::put(const std::string& key, const ValueObject& valueObject) {
+            std::lock_guard<std::mutex> lock(mtx_);
+            store_[key] = std::make_unique<ValueObject>(valueObject);
         }
 
         bool KeyValueStore::deleteKey(const std::string& key) {
@@ -84,9 +88,7 @@ namespace kvcpp {
         void KeyValueStore::clear() {
             std::lock_guard<std::mutex> lock(mtx_);
             store_.clear();
-        }
-
-        std::string KeyValueStore::attributeValueToString(const AttributeValue& value) const {
+        }        std::string KeyValueStore::attributeValueToString(const AttributeValue& value) const {
             return std::visit([](const auto& v) -> std::string {
                 if constexpr(std::is_same_v<std::decay_t<decltype(v)>, std::string>) {
                     return v;
@@ -98,6 +100,16 @@ namespace kvcpp {
                     return std::to_string(v);
                 }
             }, value);
+        }
+
+        void KeyValueStore::save(const std::string& filePath) const {
+            persistence::PersistenceManager manager(filePath);
+            manager.save(*this);
+        }
+
+        void KeyValueStore::load(const std::string& filePath) {
+            persistence::PersistenceManager manager(filePath);
+            manager.load(*this);
         }
 
     }

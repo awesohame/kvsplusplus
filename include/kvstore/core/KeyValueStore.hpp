@@ -49,9 +49,7 @@ namespace kvcpp {
             * @return Vector of keys that match the criteria
             */
             std::vector<std::string> search(const std::string& attributeKey,
-                const std::string& attributeValue) const;
-
-            /**
+                const std::string& attributeValue) const;            /**
             * Add or update a key-value pair in the store
             * @param key The key to add/update
             * @param attributePairs List of attribute key-value pairs (both as strings)
@@ -60,6 +58,13 @@ namespace kvcpp {
             */
             void put(const std::string& key,
                 const std::vector<std::pair<std::string, std::string>>& attributePairs);
+
+            /**
+            * Add or update a key-value pair in the store with a ValueObject
+            * @param key The key to add/update
+            * @param valueObject The ValueObject to store
+            */
+            void put(const std::string& key, const ValueObject& valueObject);
 
             /**
             * Delete a key-value pair from the store
@@ -84,12 +89,24 @@ namespace kvcpp {
             * Check if the store is empty
             * @return true if empty, false otherwise
             */
-            bool empty() const;
-
-            /**
+            bool empty() const;            /**
             * Clear all entries from the store
             */
             void clear();
+
+            /**
+            * Save the store to a file using PersistenceManager
+            * @param filePath Path to the file where data should be saved
+            * @throws KVStoreException if saving fails
+            */
+            void save(const std::string& filePath) const;
+
+            /**
+            * Load store data from a file using PersistenceManager
+            * @param filePath Path to the file from which data should be loaded
+            * @throws KVStoreException if loading fails
+            */
+            void load(const std::string& filePath);
 
         private:
             /**

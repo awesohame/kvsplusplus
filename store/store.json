@@ -1,0 +1,22 @@
+{
+  "store": {
+    "cloud_search_003": {
+      "execution_time": 45,
+      "last_accessed": false,
+      "results_count": 3,
+      "query": "cloud computing basics"
+    },
+    "nn_search_002": {
+      "execution_time": 65,
+      "last_accessed": true,
+      "results_count": 7,
+      "query": "neural networks fundamentals"
+    },
+    "ml_search_001": {
+      "execution_time": 85,
+      "last_accessed": true,
+      "results_count": 12,
+      "query": "machine learning algorithms"
+    }
+  }
+}
