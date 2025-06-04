@@ -5,10 +5,10 @@
 
 int main() {
     try {
-        std::cout << "=== KV++ Notes App Search Cache Test ===" << std::endl;
+        std::cout << "=== KVC++ Notes App Search Cache Test ===" << std::endl;
 
-        // Create a key-value store instance
-        kvcpp::core::KeyValueStore store;        // Dummy data: Search query cache for a notes app
+        // create a key-value store instance
+        kvcpp::core::KeyValueStore store;        // dummy data -> search query cache for a notes app
         std::vector<std::pair<std::string, std::string>> query1 = {
             {"query", "machine learning algorithms"},
             {"results_count", "12"},
@@ -16,11 +16,10 @@ int main() {
             {"execution_time", "85"}  // milliseconds
         };
 
-        // Test put operation
         std::cout << "Caching search query 'ml_search_001'..." << std::endl;
-        store.put("ml_search_001", query1);// Test get operation
+        store.put("ml_search_001", query1); // test put
         std::cout << "Getting cached query 'ml_search_001'..." << std::endl;
-        const auto* valueObj = store.get("ml_search_001");
+        const auto* valueObj = store.get("ml_search_001"); // test get
         if(valueObj) {
             std::cout << "Found: " << valueObj->toString() << std::endl;
         }
@@ -28,24 +27,24 @@ int main() {
             std::cout << "Query cache not found!" << std::endl;
         }
 
-        // Test keys operation
         std::cout << "All cached queries: ";
-        auto allKeys = store.keys();
+        auto allKeys = store.keys(); // test keys
         for(const auto& key : allKeys) {
             std::cout << key << " ";
         }
         std::cout << std::endl;
 
-        // Test search operation
         std::cout << "Searching for recently accessed queries (last_accessed=true)..." << std::endl;
-        auto searchResults = store.search("last_accessed", "true");
-        std::cout << "Found " << searchResults.size() << " matches" << std::endl;        // Test custom exception handling - TypeMismatchException
+        auto searchResults = store.search("last_accessed", "true"); // test search
+        std::cout << "Found " << searchResults.size() << " matches" << std::endl;
+
+        // test custom exception - TypeMismatchException
         std::cout << "\n=== Testing Custom Exception Handling ===" << std::endl;
         try {
-            // First, create another search query with conflicting type
+            // first, create another search query with conflicting type
             std::vector<std::pair<std::string, std::string>> badQuery = {
                 {"query", "database design"},
-                {"results_count", "not_a_number"},  // This will be parsed as string, but results_count was established as int
+                {"results_count", "not_a_number"},  // this will be parsed as string, but results_count was established as int
                 {"last_accessed", "false"}
             };
 
@@ -55,7 +54,8 @@ int main() {
         }
         catch(const kvcpp::exceptions::TypeMismatchException& e) {
             std::cout << "[PASS] Successfully caught TypeMismatchException: " << e.what() << std::endl;
-        }        // Test setAttribute methods with type validation
+        }
+        // test setAttribute methods with type validation
         std::cout << "\n=== Testing setAttribute with Type Validation ===" << std::endl;
         try {
             kvcpp::core::ValueObject directObj;
@@ -66,9 +66,9 @@ int main() {
 
             std::cout << "[PASS] Created search cache object with mixed types: " << directObj.toString() << std::endl;
 
-            // Now try to violate the type that was just established
+            // now try to violate the type that was just established
             std::cout << "Attempting to set 'result_count' as string (should fail)..." << std::endl;
-            directObj.setAttribute("result_count", "eight");  // This should throw TypeMismatchException
+            directObj.setAttribute("result_count", "eight");  // this should throw TypeMismatchException
 
             std::cout << "ERROR: Should have thrown TypeMismatchException!" << std::endl;
 
@@ -77,8 +77,8 @@ int main() {
             std::cout << "[PASS] Successfully caught TypeMismatchException: " << e.what() << std::endl;
         }
 
-        std::cout << "=== Test Completed Successfully ===" << std::endl;        // Test persistence functionality
-        std::cout << "\n=== Testing Persistence Manager ===" << std::endl;        // Add some more test data
+        std::cout << "=== Test Completed Successfully ===" << std::endl; // test persistence functionality
+        std::cout << "\n=== Testing Persistence Manager ===" << std::endl; // add more test data
         std::vector<std::pair<std::string, std::string>> query2 = {
             {"query", "neural networks fundamentals"},
             {"results_count", "7"},
@@ -95,18 +95,18 @@ int main() {
         };
         store.put("cloud_search_003", query3);
 
-        std::cout << "Added more test data. Current store has " << store.size() << " entries" << std::endl;        // Save current store data
+        std::cout << "Added more test data. Current store has " << store.size() << " entries" << std::endl;        // save current store data
         std::string testFile = "store/store.json";
         std::cout << "Saving store to: " << testFile << std::endl;
         store.save(testFile);
         std::cout << "[PASS] Store saved successfully" << std::endl;
 
-        // Create a new store and load the data
+        // create a new store and load the data
         kvcpp::core::KeyValueStore newStore;
         std::cout << "Loading data into new store..." << std::endl;
         newStore.load(testFile);
 
-        // Verify the loaded data
+        // verify the loaded data
         auto loadedKeys = newStore.keys();
         std::cout << "[PASS] Loaded " << loadedKeys.size() << " keys from file" << std::endl;
 
@@ -115,17 +115,20 @@ int main() {
             if(valueObj) {
                 std::cout << "  Loaded: " << key << " -> " << valueObj->toString() << std::endl;
             }
-        }        // Test that TypeRegistry state is maintained
+        }
+
+        // test that TypeRegistry state is maintained
         std::cout << "\nTesting that type consistency persists across sessions..." << std::endl;
         try {
             kvcpp::core::ValueObject testObj;
-            testObj.setAttribute("results_count", "invalid_count"); // Should fail - results_count was established as int
+            testObj.setAttribute("results_count", "invalid_count"); // should fail - results_count was int
             newStore.put("test_consistency", testObj);
             std::cout << "ERROR: Should have thrown TypeMismatchException!" << std::endl;
         }
         catch(const kvcpp::exceptions::TypeMismatchException& e) {
             std::cout << "[PASS] Type consistency maintained after load: " << e.what() << std::endl;
-        }        // Test search functionality on loaded data
+        }
+        // test search functionality on loaded data
         std::cout << "\nTesting search on loaded data..." << std::endl;
         auto loadedSearchResults = newStore.search("last_accessed", "true");
         std::cout << "[PASS] Found " << loadedSearchResults.size() << " search queries with last_accessed=true" << std::endl;

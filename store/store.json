@@ -1,22 +1,26 @@
 {
   "store": {
-    "cloud_search_003": {
-      "execution_time": 45,
-      "last_accessed": false,
-      "results_count": 3,
-      "query": "cloud computing basics"
+    "ml_search_001": {
+      "query": "machine learning algorithms",
+      "results_count": 12,
+      "last_accessed": true,
+      "execution_time": 85
     },
     "nn_search_002": {
-      "execution_time": 65,
-      "last_accessed": true,
+      "query": "neural networks fundamentals",
       "results_count": 7,
-      "query": "neural networks fundamentals"
-    },
-    "ml_search_001": {
-      "execution_time": 85,
       "last_accessed": true,
-      "results_count": 12,
-      "query": "machine learning algorithms"
+      "execution_time": 65
+    },
+    "cloud_search_003": {
+      "query": "cloud computing basics",
+      "results_count": 3,
+      "last_accessed": false,
+      "execution_time": 45
+    },
+    "test": {
+      "name": "Brand Test",
+      "product": "KVC++"
     }
   }
 }

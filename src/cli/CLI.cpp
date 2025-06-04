@@ -438,7 +438,7 @@ namespace kvcpp {
                 return 0;
             }
 
-            std::cout << ColorOutput::bold("=== KV++ Store CLI Help ===") << std::endl << std::endl;
+            std::cout << ColorOutput::bold("=== KVC++ Store CLI Help ===") << std::endl << std::endl;
 
             std::cout << ColorOutput::green("Data Operations:") << std::endl;
             std::cout << "  " << ColorOutput::cyan("get <key>") << "                     - Get value for a key" << std::endl;
@@ -476,17 +476,15 @@ namespace kvcpp {
         void CLI::printWelcome() {
             if(jsonMode_) return;
 
-            std::cout << ColorOutput::bold("=== Welcome to KV++ Store CLI ===") << std::endl;
+            std::cout << ColorOutput::bold("=== Welcome to KVC++ Store CLI ===") << std::endl;
             std::cout << "Type " << ColorOutput::cyan("help") << " for available commands or "
                 << ColorOutput::cyan("exit") << " to quit." << std::endl;
             std::cout << "Store file: " << ColorOutput::yellow(defaultStoreFile_) << std::endl;
             std::cout << "Auto-save: " << (autoSave_ ? ColorOutput::green("Enabled") : ColorOutput::red("Disabled")) << std::endl;
             std::cout << std::endl;
-        }
-
-        void CLI::printPrompt() {
+        }        void CLI::printPrompt() {
             if(jsonMode_) return;
-            std::cout << ColorOutput::green("kv++ > ");
+            std::cout << ColorOutput::green("kvc++ > ");
         }
 
         void CLI::printError(const std::string& message) {

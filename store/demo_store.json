@@ -1,0 +1,46 @@
+{
+  "store": {
+    "user_004": {
+      "score": 78.900000,
+      "premium": false,
+      "age": 45,
+      "name": "Dave Wilson"
+    },
+    "user_003": {
+      "score": 92.800000,
+      "premium": true,
+      "age": 22,
+      "name": "Carol Davis"
+    },
+    "user_002": {
+      "score": 87.200000,
+      "premium": false,
+      "age": 35,
+      "name": "Bob Smith"
+    },
+    "user_001": {
+      "score": 95.500000,
+      "premium": true,
+      "age": 28,
+      "name": "Alice Johnson"
+    },
+    "ml_fundamentals": {
+      "estimated_time": 25,
+      "price": 25000.000000,
+      "enrolled": true,
+      "title": "Machine Learning Fundamentals"
+    },
+    "data_science_course": {
+      "estimated_time": 40,
+      "price": 45000.000000,
+      "enrolled": true,
+      "title": "Data Science Masterclass"
+    },
+    "sde_bootcamp": {
+      "estimated_time": 30,
+      "price": 30000.000000,
+      "enrolled": false,
+      "title": "SDE-Bootcamp"
+    }
+  }
+}
