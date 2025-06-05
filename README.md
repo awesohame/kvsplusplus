@@ -37,25 +37,25 @@ cd build
 cmake ..
 cmake --build . --config Release
 
-# All executables will be in build/bin/
+# All executables will be in build/bin/Release/
 ```
 
 ### Basic Usage
 
 ```powershell
 # Interactive mode
-.\build\bin\kvspp-cli.exe
+.\build\bin\Release\kvspp-cli.exe
 
 # Single commands
-.\build\bin\kvspp.exe put user1 name:John age:25 active:true
-.\build\bin\kvspp.exe get user1
-.\build\bin\kvspp.exe search age 25
+.\build\bin\Release\kvspp-single-cmd.exe put user1 name:John age:25 active:true
+.\build\bin\Release\kvspp-single-cmd.exe get user1
+.\build\bin\Release\kvspp-single-cmd.exe search age 25
 
 # Run demo
-.\build\bin\kvspp-demo.exe
+.\build\bin\Release\kvspp-demo.exe
 
 # Run tests
-.\build\bin\kvspp-test.exe
+.\build\bin\Release\kvspp-test.exe
 ```
 
 ## Architecture
@@ -74,7 +74,7 @@ kvcplusplus/
 │   └── tests_main.cpp  # Test suite entry point
 ├── include/            # Public headers
 ├── CLI_README.md       # Detailed CLI documentation
-└── build/bin/          # Generated executables (after you compile)
+└── build/bin/Release/   # Generated executables (after you compile)
 ```
 
 ### Core Components
@@ -89,7 +89,7 @@ kvcplusplus/
 
 | Executable | Purpose | Use Case |
 |------------|---------|----------|
-| `kvspp.exe` | Single command CLI | Scripting, automation, CI/CD |
+| `kvspp-single-cmd.exe` | Single command CLI | Scripting, automation, CI/CD |
 | `kvspp-cli.exe` | Interactive CLI | Use tool through CLI |
 | `kvspp-demo.exe` | Demo application | Feature showcase, sample data |
 | `kvspp-test.exe` | Test suite | for devs (development testing) |
@@ -106,7 +106,7 @@ kvcplusplus/
 Perfect for automation and scripting:
 ```powershell
 # Get structured data for processing
-$userData = .\build\bin\kvspp.exe --json get user1 | ConvertFrom-Json
+$userData = .\build\bin\Release\kvspp-single-cmd.exe --json get user1 | ConvertFrom-Json
 Write-Host "User age: $($userData.age)"
 ```
 
@@ -114,16 +114,16 @@ Write-Host "User age: $($userData.age)"
 Multiple isolated stores:
 ```powershell
 # Use different stores for different purposes
-.\build\bin\kvspp.exe -f products.json put laptop price:999.99 stock:50
-.\build\bin\kvspp.exe -f users.json put user1 name:John role:admin
+.\build\bin\Release\kvspp-single-cmd.exe -f products.json put laptop price:999.99 stock:50
+.\build\bin\Release\kvspp-single-cmd.exe -f users.json put user1 name:John role:admin
 ```
 
 ### Batch Operations
 Load and process data efficiently:
 ```powershell
 # Load demo data and process
-.\build\bin\kvspp.exe load store/demo_store.json
-$premiumUsers = .\build\bin\kvspp.exe --json search premium true | ConvertFrom-Json
+.\build\bin\Release\kvspp-single-cmd.exe load store/demo_store.json
+$premiumUsers = .\build\bin\Release\kvspp-single-cmd.exe --json search premium true | ConvertFrom-Json
 ```
 
 ## Use Cases

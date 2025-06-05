@@ -74,6 +74,9 @@ namespace kvspp {
             std::vector<std::pair<std::string, std::string>> parseAttributePairs(
                 const std::vector<std::string>& args, size_t startIndex);
 
+            // File path normalization
+            std::string normalizeStorePath(const std::string& filePath);
+
             // Auto-save functionality
             void autoSaveIfEnabled();
         };

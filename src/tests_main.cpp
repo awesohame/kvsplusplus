@@ -62,7 +62,8 @@ int main() {
 
             // now try to violate the type that was just established            std::cout << "Attempting to set 'result_count' as string (should fail)..." << std::endl;            directObj.setAttribute("result_count", "eight");  // this should throw TypeMismatchException
 
-            std::cout << kvspp::utils::ColorOutput::failMsg("ERROR: Should have thrown TypeMismatchException!") << std::endl;        }
+            std::cout << kvspp::utils::ColorOutput::failMsg("ERROR: Should have thrown TypeMismatchException!") << std::endl;
+        }
         catch(const kvspp::exceptions::TypeMismatchException& e) {
             std::cout << kvspp::utils::ColorOutput::passMsg("Successfully caught TypeMismatchException: " + std::string(e.what())) << std::endl;
         }
@@ -83,7 +84,7 @@ int main() {
             {"last_accessed", "false"},
             {"execution_time", "45"}
         };        store.put("cloud_search_003", query3);        std::cout << kvspp::utils::ColorOutput::passMsg("Added more test data. Current store has " + std::to_string(store.size()) + " entries") << std::endl;
-        
+
         // save current store data
         std::string testFile = "store/store.json";
         std::cout << "Saving store to: " << testFile << std::endl;
@@ -94,21 +95,20 @@ int main() {
         kvspp::core::KeyValueStore newStore;
         std::cout << "Loading data into new store..." << std::endl;
         newStore.load(testFile);
-        
+
         // verify the loaded data
         auto loadedKeys = newStore.keys();
-        std::cout << kvspp::utils::ColorOutput::passMsg("Loaded " + std::to_string(loadedKeys.size()) + " keys from file") << std::endl;
-
-        for(const auto& key : loadedKeys) {
-            const auto* valueObj = newStore.get(key);
-            if(valueObj) {
-                std::cout << "  Loaded: " << key << " -> " << valueObj->toString() << std::endl;
+        std::cout << kvspp::utils::ColorOutput::passMsg("Loaded " + std::to_string(loadedKeys.size()) + " keys from file") << std::endl;        for(const auto& key : loadedKeys) {
+            const auto* loadedValueObj = newStore.get(key);
+            if(loadedValueObj) {
+                std::cout << "  Loaded: " << key << " -> " << loadedValueObj->toString() << std::endl;
             }
         }
 
         // test that TypeRegistry state is maintained
         std::cout << "\nTesting that type consistency persists across sessions..." << std::endl;
-        try {            kvspp::core::ValueObject testObj;
+        try {
+            kvspp::core::ValueObject testObj;
             testObj.setAttribute("results_count", "invalid_count"); // should fail - results_count was int
             newStore.put("test_consistency", testObj);
             std::cout << kvspp::utils::ColorOutput::failMsg("ERROR: Should have thrown TypeMismatchException!") << std::endl;
@@ -116,7 +116,7 @@ int main() {
         catch(const kvspp::exceptions::TypeMismatchException& e) {
             std::cout << kvspp::utils::ColorOutput::passMsg("Type consistency maintained after load: " + std::string(e.what())) << std::endl;
         }
-        
+
         // test search functionality on loaded data
         std::cout << "\nTesting search on loaded data..." << std::endl;
         auto loadedSearchResults = newStore.search("last_accessed", "true");

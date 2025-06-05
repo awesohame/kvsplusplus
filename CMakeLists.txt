@@ -31,8 +31,8 @@ add_executable(kvspp-test src/tests_main.cpp)
 target_link_libraries(kvspp-test kvstore)
 
 # Executable 2: Single command CLI 
-add_executable(kvspp src/single_cmd_main.cpp)
-target_link_libraries(kvspp kvstore)
+add_executable(kvspp-single-cmd src/single_cmd_main.cpp)
+target_link_libraries(kvspp-single-cmd kvstore)
 
 # Executable 3: Interactive CLI
 add_executable(kvspp-cli src/cli_main.cpp)
@@ -43,10 +43,7 @@ add_executable(kvspp-demo src/demo_main.cpp)
 target_link_libraries(kvspp-demo kvstore)
 
 # Set up linking for all executables
-set(ALL_TARGETS kvspp-test kvspp kvspp-cli kvspp-demo)
-
-# Set up linking for all executables
-set(ALL_TARGETS kvspp-test kvspp kvspp-cli kvspp-demo)
+set(ALL_TARGETS kvspp-test kvspp-single-cmd kvspp-cli kvspp-demo)
 
 foreach(target ${ALL_TARGETS})
     # make sure MinGW doesn't complain about missing entry points

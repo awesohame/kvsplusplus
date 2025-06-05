@@ -8,10 +8,7 @@
  * Provides a REPL-style interface for the key-value store
  */
 int main(int argc, char* argv[]) {
-    try {
-        kvspp::cli::CLI cli;
-
-        // Parse command line options
+    try {        // Parse command line options
         bool verbose = false;
         bool jsonMode = false;
         std::string storeFile = "store/store.json";
@@ -32,7 +29,14 @@ int main(int argc, char* argv[]) {
             }
             else if(arg == "--file" || arg == "-f") {
                 if(i + 1 < argc) {
-                    storeFile = argv[++i];
+                    std::string userPath = argv[++i];
+                    // Normalize the path - if it's just a filename, put it in store/
+                    if(userPath.find('/') == std::string::npos && userPath.find('\\') == std::string::npos) {
+                        storeFile = "store/" + userPath;
+                    }
+                    else {
+                        storeFile = userPath;
+                    }
                 }
                 else {
                     std::cerr << "Error: --file requires a filename argument" << std::endl;
@@ -61,10 +65,12 @@ int main(int argc, char* argv[]) {
             }
         }
 
+// Create CLI with the correct store file after parsing all arguments
+        kvspp::cli::CLI cli(storeFile);
+
         // Configure CLI
         cli.setVerboseMode(verbose);
         cli.setJsonMode(jsonMode);
-        cli.setDefaultStoreFile(storeFile);
         cli.setAutoSave(autoSave);
 
         // Run interactive mode

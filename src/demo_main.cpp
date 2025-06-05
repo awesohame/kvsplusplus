@@ -182,10 +182,9 @@ int main() {
         bool deleted = store.deleteKey("user_002");
         std::cout << (deleted ? kvspp::utils::ColorOutput::passMsg("Delete operation successful") : kvspp::utils::ColorOutput::failMsg("Delete operation failed")) << std::endl;
         std::cout << "Store now has " << store.size() << " entries" << std::endl;
-        std::cout << std::endl;        std::cout << "=== Demo Completed Successfully ===" << std::endl;
-        std::cout << "You can now experiment with the CLI tools:" << std::endl;
+        std::cout << std::endl;        std::cout << "=== Demo Completed Successfully ===" << std::endl;        std::cout << "You can now experiment with the CLI tools:" << std::endl;
         std::cout << "  - kvspp-cli (interactive mode)" << std::endl;
-        std::cout << "  - kvspp (single command mode)" << std::endl;
+        std::cout << "  - kvspp-single-cmd (single command mode)" << std::endl;
         std::cout << "  - Use 'load " << demoFile << "' to load this demo data" << std::endl;
 
         return 0;

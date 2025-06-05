@@ -13,11 +13,7 @@ int main(int argc, char* argv[]) {
             std::cerr << "Usage: " << argv[0] << " [OPTIONS] <command> [args...]" << std::endl;
             std::cerr << "Try: " << argv[0] << " help" << std::endl;
             return 1;
-        }
-
-        kvspp::cli::CLI cli;
-
-        // Parse command line options and build command vector
+        }        // Parse command line options and build command vector
         std::vector<std::string> command;
         bool verbose = false;
         bool jsonMode = false;
@@ -39,7 +35,14 @@ int main(int argc, char* argv[]) {
             }
             else if(arg == "--file" || arg == "-f") {
                 if(i + 1 < argc) {
-                    storeFile = argv[++i];
+                    std::string userPath = argv[++i];
+                    // Normalize the path - if it's just a filename, put it in store/
+                    if(userPath.find('/') == std::string::npos && userPath.find('\\') == std::string::npos) {
+                        storeFile = "store/" + userPath;
+                    }
+                    else {
+                        storeFile = userPath;
+                    }
                 }
                 else {
                     std::cerr << "Error: --file requires a filename argument" << std::endl;
@@ -81,18 +84,18 @@ int main(int argc, char* argv[]) {
                 // This is part of the command
                 command.push_back(arg);
             }
-        }
-
-        if(command.empty()) {
+        }        if(command.empty()) {
             std::cerr << "Error: No command specified" << std::endl;
             std::cerr << "Use --help for usage information" << std::endl;
             return 1;
         }
 
+        // Create CLI with the correct store file after parsing all arguments
+        kvspp::cli::CLI cli(storeFile);
+
         // Configure CLI
         cli.setVerboseMode(verbose);
         cli.setJsonMode(jsonMode);
-        cli.setDefaultStoreFile(storeFile);
         cli.setAutoSave(autoSave);
 
         // Execute single command

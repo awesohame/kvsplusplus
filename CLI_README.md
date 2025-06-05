@@ -6,9 +6,9 @@ The KVS++ project now includes comprehensive CLI tools for interacting with the 
 
 ## Executables
 
-### 1. `kvspp.exe` - Single Command CLI
+### 1. `kvspp-single-cmd.exe` - Single Command CLI
 **Purpose**: Execute single commands for scripting and automation
-**Usage**: `kvspp [OPTIONS] <command> [args...]`
+**Usage**: `kvspp-single-cmd [OPTIONS] <command> [args...]`
 
 #### Options
 - `-h, --help`: Show help message
@@ -20,19 +20,19 @@ The KVS++ project now includes comprehensive CLI tools for interacting with the 
 #### Examples
 ```powershell
 # Store a new entry
-.\build\bin\kvspp.exe put user1 name:John age:25 active:true
+.\build\bin\Release\kvspp-single-cmd.exe put user1 name:John age:25 active:true
 
 # Get an entry
-.\build\bin\kvspp.exe get user1
+.\build\bin\Release\kvspp-single-cmd.exe get user1
 
 # Search for entries
-.\build\bin\kvspp.exe search age 25
+.\build\bin\Release\kvspp-single-cmd.exe search age 25
 
 # JSON output for scripting
-.\build\bin\kvspp.exe --json keys
+.\build\bin\Release\kvspp-single-cmd.exe --json keys
 
 # Use custom store file
-.\build\bin\kvspp.exe -f mystore.json keys
+.\build\bin\Release\kvspp-single-cmd.exe -f mystore.json keys
 ```
 
 ### 2. `kvspp-cli.exe` - Interactive CLI
@@ -127,26 +127,26 @@ Creates sample e-commerce course data and user profiles, demonstrates all core f
 ### Scripting with JSON Output
 ```powershell
 # Get all keys as JSON array
-$keys = .\build\bin\kvcpp.exe --json keys | ConvertFrom-Json
+$keys = .\build\bin\Release\kvspp-single-cmd.exe --json keys | ConvertFrom-Json
 
 # Get specific entry as JSON object
-$user = .\build\bin\kvcpp.exe --json get user1 | ConvertFrom-Json
+$user = .\build\bin\Release\kvspp-single-cmd.exe --json get user1 | ConvertFrom-Json
 Write-Host "User age: $($user.age)"
 
 # Search and process results
-$results = .\build\bin\kvcpp.exe --json search active true | ConvertFrom-Json
+$results = .\build\bin\Release\kvspp-single-cmd.exe --json search active true | ConvertFrom-Json
 Write-Host "Found $($results.Length) active users"
 ```
 
 ### Batch Operations
 ```powershell
 # Load demo data
-.\build\bin\kvcpp.exe load store/demo_store.json
+.\build\bin\Release\kvspp-single-cmd.exe load store/demo_store.json
 
 # Process all premium users
-$premiumUsers = .\build\bin\kvcpp.exe --json search premium true | ConvertFrom-Json
+$premiumUsers = .\build\bin\Release\kvspp-single-cmd.exe --json search premium true | ConvertFrom-Json
 foreach ($user in $premiumUsers) {
-    $userData = .\build\bin\kvcpp.exe --json get $user | ConvertFrom-Json
+    $userData = .\build\bin\Release\kvspp-single-cmd.exe --json get $user | ConvertFrom-Json
     Write-Host "Premium user: $($userData.name), Age: $($userData.age)"
 }
 ```
@@ -154,11 +154,11 @@ foreach ($user in $premiumUsers) {
 ### Custom Store Management
 ```powershell
 # Create a custom store for different data
-.\build\bin\kvspp.exe -f products.json put product1 name:"Laptop" price:999.99 stock:50
-.\build\bin\kvspp.exe -f products.json put product2 name:"Mouse" price:29.99 stock:200
+.\build\bin\Release\kvspp-single-cmd.exe -f products.json put product1 name:"Laptop" price:999.99 stock:50
+.\build\bin\Release\kvspp-single-cmd.exe -f products.json put product2 name:"Mouse" price:29.99 stock:200
 
 # List products
-.\build\bin\kvspp.exe -f products.json keys
+.\build\bin\Release\kvspp-single-cmd.exe -f products.json keys
 ```
 
 ## Architecture Highlights
@@ -230,8 +230,8 @@ kvs++ > put user1
 cd d:\Programming\cpp\kvcplusplus
 cmake --build build --clean-first
 
-# All executables will be in build/bin/
-# - kvspp.exe (single command)
+# All executables will be in build/bin/Release/
+# - kvspp-single-cmd.exe (single command)
 # - kvspp-cli.exe (interactive)
 # - kvspp-demo.exe (demo)
 # - kvspp-test.exe (test suite)

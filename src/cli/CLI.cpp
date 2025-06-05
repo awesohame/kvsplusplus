@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <regex>
 #include <iomanip>
+#include <filesystem>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -15,25 +16,47 @@
 
 namespace kvspp {
     namespace cli {
-
         CLI::CLI(const std::string& defaultStoreFile)
             : store_(std::make_unique<core::KeyValueStore>())
             , defaultStoreFile_(defaultStoreFile)
             , autoSave_(true)
             , verboseMode_(false)
-            , jsonMode_(false) {
-
-            // Try to load existing store file
-            try {
-                store_->load(defaultStoreFile_);
-                if(verboseMode_) {
-                    printInfo("Loaded existing store from: " + defaultStoreFile_);
+            , jsonMode_(false) {            // Only try to load existing store file if it's the default store/store.json
+            // For custom files specified with -f, start with an empty store unless the file exists
+            if(defaultStoreFile_ == "store/store.json") {
+                // Always try to load the default store, create it if it doesn't exist
+                try {
+                    store_->load(defaultStoreFile_);
+                    if(verboseMode_) {
+                        printInfo("Loaded existing store from: " + defaultStoreFile_);
+                    }
+                }
+                catch(const exceptions::KVStoreException&) {
+                    // File doesn't exist or is invalid, start with empty store
+                    if(verboseMode_) {
+                        printInfo("Starting with empty store");
+                    }
                 }
             }
-            catch(const exceptions::KVStoreException&) {
-                // File doesn't exist or is invalid, start with empty store
+            else if(std::filesystem::exists(defaultStoreFile_)) {
+             // For custom files, only load if they already exist
+                try {
+                    store_->load(defaultStoreFile_);
+                    if(verboseMode_) {
+                        printInfo("Loaded existing store from: " + defaultStoreFile_);
+                    }
+                }
+                catch(const exceptions::KVStoreException&) {
+                    // File exists but is invalid, start with empty store
+                    if(verboseMode_) {
+                        printInfo("Starting with empty store (existing file was invalid)");
+                    }
+                }
+            }
+            else {
+             // Custom file doesn't exist, start with empty store
                 if(verboseMode_) {
-                    printInfo("Starting with empty store");
+                    printInfo("Starting with empty store for new file: " + defaultStoreFile_);
                 }
             }
         }
@@ -597,6 +620,16 @@ namespace kvspp {
                     printError("Auto-save failed: " + std::string(e.what()));
                 }
             }
+        }
+
+        std::string CLI::normalizeStorePath(const std::string& filePath) {
+            // If the file path already contains a directory separator, use it as-is
+            if(filePath.find('/') != std::string::npos || filePath.find('\\') != std::string::npos) {
+                return filePath;
+            }
+
+            // If it's just a filename, place it in the store/ directory
+            return "store/" + filePath;
         }
 
         // ColorOutput implementation
