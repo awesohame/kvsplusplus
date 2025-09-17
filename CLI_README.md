@@ -227,7 +227,7 @@ kvs++ > put user1
 
 ```powershell
 # Build all executables
-cd d:\Programming\cpp\kvcplusplus
+cd d:\Programming\cpp\kvsplusplus
 cmake --build build --clean-first
 
 # All executables will be in build/bin/Release/

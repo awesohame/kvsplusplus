@@ -44,7 +44,7 @@ int main(int argc, char* argv[]) {
                 }
             }
             else if(arg == "--help" || arg == "-h") {
-                std::cout << "KVC++ Interactive CLI" << std::endl;
+                std::cout << "KVS++ Interactive CLI" << std::endl;
                 std::cout << "Usage: " << argv[0] << " [OPTIONS]" << std::endl;
                 std::cout << std::endl;
                 std::cout << "Options:" << std::endl;

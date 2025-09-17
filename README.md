@@ -30,39 +30,39 @@ All commands below are for Windows powershell terminal
 
 ```powershell
 # Clone and build
-git clone https://github.com/awesohame/kvcplusplus.git
-cd kvcplusplus
+git clone https://github.com/awesohame/kvsplusplus.git
+cd kvsplusplus
 mkdir build
 cd build
 cmake ..
-cmake --build . --config Release
+cmake --build .
 
-# All executables will be in build/bin/Release/
+# All executables will be in build/bin/
 ```
 
 ### Basic Usage
 
 ```powershell
 # Interactive mode
-.\build\bin\Release\kvspp-cli.exe
+.\build\bin\kvspp-cli.exe
 
 # Single commands
-.\build\bin\Release\kvspp-single-cmd.exe put user1 name:John age:25 active:true
-.\build\bin\Release\kvspp-single-cmd.exe get user1
-.\build\bin\Release\kvspp-single-cmd.exe search age 25
+.\build\bin\kvspp-single-cmd.exe put user1 name:John age:25 active:true
+.\build\bin\kvspp-single-cmd.exe get user1
+.\build\bin\kvspp-single-cmd.exe search age 25
 
 # Run demo
-.\build\bin\Release\kvspp-demo.exe
+.\build\bin\kvspp-demo.exe
 
 # Run tests
-.\build\bin\Release\kvspp-test.exe
+.\build\bin\kvspp-test.exe
 ```
 
 ## Architecture
 
 ### Project Structure
 ```
-kvcplusplus/
+kvsplusplus/
 ├── src/
 │   ├── core/           # Core key-value store implementation
 │   ├── cli/            # CLI framework and command processing
@@ -74,7 +74,7 @@ kvcplusplus/
 │   └── tests_main.cpp  # Test suite entry point
 ├── include/            # Public headers
 ├── CLI_README.md       # Detailed CLI documentation
-└── build/bin/Release/   # Generated executables (after you compile)
+└── build/bin/   # Generated executables (after you compile)
 ```
 
 ### Core Components
@@ -106,7 +106,7 @@ kvcplusplus/
 Perfect for automation and scripting:
 ```powershell
 # Get structured data for processing
-$userData = .\build\bin\Release\kvspp-single-cmd.exe --json get user1 | ConvertFrom-Json
+$userData = .\build\bin\kvspp-single-cmd.exe --json get user1 | ConvertFrom-Json
 Write-Host "User age: $($userData.age)"
 ```
 
@@ -114,16 +114,16 @@ Write-Host "User age: $($userData.age)"
 Multiple isolated stores:
 ```powershell
 # Use different stores for different purposes
-.\build\bin\Release\kvspp-single-cmd.exe -f products.json put laptop price:999.99 stock:50
-.\build\bin\Release\kvspp-single-cmd.exe -f users.json put user1 name:John role:admin
+.\build\bin\kvspp-single-cmd.exe -f products.json put laptop price:999.99 stock:50
+.\build\bin\kvspp-single-cmd.exe -f users.json put user1 name:John role:admin
 ```
 
 ### Batch Operations
 Load and process data efficiently:
 ```powershell
 # Load demo data and process
-.\build\bin\Release\kvspp-single-cmd.exe load store/demo_store.json
-$premiumUsers = .\build\bin\Release\kvspp-single-cmd.exe --json search premium true | ConvertFrom-Json
+.\build\bin\kvspp-single-cmd.exe load store/demo_store.json
+$premiumUsers = .\build\bin\kvspp-single-cmd.exe --json search premium true | ConvertFrom-Json
 ```
 
 ## Use Cases

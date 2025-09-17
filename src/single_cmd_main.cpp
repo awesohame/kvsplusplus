@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
                 }
             }
             else if(arg == "--help" || arg == "-h") {
-                std::cout << "KVC++ Single Command CLI" << std::endl;
+                std::cout << "KVS++ Single Command CLI" << std::endl;
                 std::cout << "Usage: " << argv[0] << " [OPTIONS] <command> [args...]" << std::endl;
                 std::cout << std::endl;
                 std::cout << "Options:" << std::endl;
