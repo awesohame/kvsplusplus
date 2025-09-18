@@ -183,4 +183,32 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Built with modern C++ best practices
 - CLI framework inspired by popular command-line tools
 
----
+## Docker Usage
+
+You can run the CLI in a portable Docker container (Ubuntu 24.04) using the provided Dockerfile. This is useful for deployment, integration, or running the CLI on any system with Docker installed.
+
+### Build the Docker Image
+
+From your project root (where the Dockerfile is):
+
+```sh
+# Build the image (from WSL or Linux terminal)
+docker build -t kvspp-cli .
+```
+
+### Run the CLI in Docker (with persistent store directory)
+
+```powershell
+# PowerShell (Windows):
+docker run -it --rm -v "D:\Programming\cpp\kvsplusplus\store:/app/store" kvspp-cli
+```
+
+```sh
+# Linux/WSL:
+docker run -it --rm -v "$PWD/store:/app/store" kvspp-cli
+```
+
+- The `store` directory on your host will be mounted into the container, so all data is persistent and accessible.
+- The Dockerfile is kept in sync with the latest binary and project files.
+
+> **Note:** The Dockerfile is committed to the repository for portability and reproducibility.
