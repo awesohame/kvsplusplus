@@ -40,16 +40,19 @@ cmake --build .
 # All executables will be in build/bin/
 ```
 
+
 ### Basic Usage
+
+> **Note:** All commands now require a `storeToken` (store ID) as the first argument to identify which logical store to use. This enables multiple isolated stores in a single process.
 
 ```powershell
 # Interactive mode
 .\build\bin\kvspp-cli.exe
 
-# Single commands
-.\build\bin\kvspp-single-cmd.exe put user1 name:John age:25 active:true
-.\build\bin\kvspp-single-cmd.exe get user1
-.\build\bin\kvspp-single-cmd.exe search age 25
+# Single commands (with storeToken)
+.\build\bin\kvspp-single-cmd.exe put mystore user1 name:John age:25 active:true
+.\build\bin\kvspp-single-cmd.exe get mystore user1
+.\build\bin\kvspp-single-cmd.exe search mystore age 25
 
 # Run demo
 .\build\bin\kvspp-demo.exe
@@ -57,6 +60,19 @@ cmake --build .
 # Run tests
 .\build\bin\kvspp-test.exe
 ```
+## Multi-Store Support
+
+KVS++ now supports multiple isolated stores, each identified by a `storeToken` (a string you provide). All commands must specify the store token as the first argument:
+
+```powershell
+# Put and get in different stores
+.\build\bin\kvspp-single-cmd.exe put store1 keyA value:foo
+.\build\bin\kvspp-single-cmd.exe put store2 keyA value:bar
+.\build\bin\kvspp-single-cmd.exe get store1 keyA   # returns foo
+.\build\bin\kvspp-single-cmd.exe get store2 keyA   # returns bar
+```
+
+Each store is persisted separately as `store/<storeToken>.json`.
 
 ## Architecture
 
@@ -110,20 +126,17 @@ $userData = .\build\bin\kvspp-single-cmd.exe --json get user1 | ConvertFrom-Json
 Write-Host "User age: $($userData.age)"
 ```
 
-### Custom Store Files
-Multiple isolated stores:
-```powershell
-# Use different stores for different purposes
-.\build\bin\kvspp-single-cmd.exe -f products.json put laptop price:999.99 stock:50
-.\build\bin\kvspp-single-cmd.exe -f users.json put user1 name:John role:admin
-```
+
+### Custom Store Files (Legacy)
+Previously, you could use the `-f` flag to specify a custom store file. Now, use the `storeToken` argument for logical separation. For backward compatibility, the `-f` flag will map to a store token based on the filename.
+
 
 ### Batch Operations
 Load and process data efficiently:
 ```powershell
-# Load demo data and process
-.\build\bin\kvspp-single-cmd.exe load store/demo_store.json
-$premiumUsers = .\build\bin\kvspp-single-cmd.exe --json search premium true | ConvertFrom-Json
+# Load demo data into a specific store
+.\build\bin\kvspp-single-cmd.exe load mystore store/demo_store.json
+$premiumUsers = .\build\bin\kvspp-single-cmd.exe --json search mystore premium true | ConvertFrom-Json
 ```
 
 ## Use Cases

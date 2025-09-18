@@ -4,11 +4,6 @@
 namespace kvspp {
     namespace core {
 
-        TypeRegistry& TypeRegistry::getInstance() {
-            static TypeRegistry instance;
-            return instance;
-        }
-
         void TypeRegistry::validateAndRegisterType(const std::string& attributeName, AttributeType type) {
             std::lock_guard<std::mutex> lock(mtx);            auto it = attributeTypes_.find(attributeName);
             if(it != attributeTypes_.end()) {

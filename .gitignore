@@ -1,5 +1,6 @@
 /build/
 /.vscode/
+store/*
 
 # CMake build files
 CMakeLists.txt.user

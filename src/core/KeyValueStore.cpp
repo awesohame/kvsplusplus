@@ -40,8 +40,8 @@ namespace kvspp {
             const std::vector<std::pair<std::string, std::string>>& attributePairs) {
             std::lock_guard<std::mutex> lock(mtx_);
 
-            // Create new ValueObject (this will validate types via TypeRegistry)
-            auto valueObject = std::make_unique<ValueObject>(attributePairs);
+            // Create new ValueObject with this store's TypeRegistry
+            auto valueObject = std::make_unique<ValueObject>(attributePairs, typeRegistry_);
 
             // Store the object
             store_[key] = std::move(valueObject);
@@ -49,7 +49,9 @@ namespace kvspp {
 
         void KeyValueStore::put(const std::string& key, const ValueObject& valueObject) {
             std::lock_guard<std::mutex> lock(mtx_);
-            store_[key] = std::make_unique<ValueObject>(valueObject);
+            auto newValueObject = std::make_unique<ValueObject>(valueObject);
+            newValueObject->setTypeRegistry(typeRegistry_);
+            store_[key] = std::move(newValueObject);
         }
 
         bool KeyValueStore::deleteKey(const std::string& key) {
@@ -110,6 +112,10 @@ namespace kvspp {
         void KeyValueStore::load(const std::string& filePath) {
             persistence::PersistenceManager manager(filePath);
             manager.load(*this);
+        }
+
+        TypeRegistry& KeyValueStore::getTypeRegistry() {
+            return typeRegistry_;
         }
 
     }

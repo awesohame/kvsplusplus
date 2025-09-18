@@ -22,6 +22,7 @@ namespace kvspp {
          * TypeRegistry ensures that once an attribute type is defined,
          * all subsequent uses of that attribute must be of the same type.
          * This class is thread-safe.
+         * Each KeyValueStore has its own TypeRegistry instance.
          */
         class TypeRegistry {
         private:
@@ -31,8 +32,16 @@ namespace kvspp {
             mutable std::mutex mtx;
 
         public:
-            // get singleton instance
-            static TypeRegistry& getInstance();
+            // Default constructor
+            TypeRegistry() = default;
+
+            // Delete copy constructor and assignment for safety
+            TypeRegistry(const TypeRegistry&) = delete;
+            TypeRegistry& operator=(const TypeRegistry&) = delete;
+
+            // Allow move operations
+            TypeRegistry(TypeRegistry&&) = default;
+            TypeRegistry& operator=(TypeRegistry&&) = default;
 
             // Register new attribute type or validate existing one
             // throws exception if type mismatch
@@ -52,12 +61,6 @@ namespace kvspp {
 
             // clear all registered types
             void clear();
-
-        private:
-            // private constructor and delete copy constructor and assignment operator
-            TypeRegistry() = default;
-            TypeRegistry(const TypeRegistry&) = delete;
-            TypeRegistry& operator=(const TypeRegistry&) = delete;
         };
 
     }

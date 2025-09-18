@@ -1,6 +1,7 @@
 #include <iostream>
 #include <vector>
 #include "kvstore/core/KeyValueStore.hpp"
+#include "kvstore/core/StoreManager.hpp"
 #include "kvstore/exceptions/Exceptions.hpp"
 #include "kvstore/utils/Helpers.hpp"
 
@@ -52,7 +53,10 @@ int main() {
         }
         // test setAttribute methods with type validation
         std::cout << "\n=== Testing setAttribute with Type Validation ===" << std::endl;        try {
-            kvspp::core::ValueObject directObj;
+            // Create a TypeRegistry for this test
+            kvspp::core::TypeRegistry testTypeRegistry;
+            kvspp::core::ValueObject directObj(testTypeRegistry);
+
             directObj.setAttribute("search_term", "deep learning");  // string
             directObj.setAttribute("result_count", 8);        // int  
             directObj.setAttribute("avg_relevance", 87.5); // double
@@ -60,7 +64,7 @@ int main() {
 
             std::cout << kvspp::utils::ColorOutput::passMsg("Created search cache object with mixed types: " + directObj.toString()) << std::endl;
 
-            // now try to violate the type that was just established            std::cout << "Attempting to set 'result_count' as string (should fail)..." << std::endl;            directObj.setAttribute("result_count", "eight");  // this should throw TypeMismatchException
+            // now try to violate the type that was just established in THIS TypeRegistry            std::cout << "Attempting to set 'result_count' as string (should fail since it's already int)..." << std::endl;            directObj.setAttribute("result_count", "eight");  // this should throw TypeMismatchException
 
             std::cout << kvspp::utils::ColorOutput::failMsg("ERROR: Should have thrown TypeMismatchException!") << std::endl;
         }
@@ -123,6 +127,119 @@ int main() {
         std::cout << kvspp::utils::ColorOutput::passMsg("Found " + std::to_string(loadedSearchResults.size()) + " search queries with last_accessed=true") << std::endl;
 
         std::cout << "=== All Tests Completed Successfully ===" << std::endl;
+
+        // === NEW MULTI-STORE TESTS ===
+        std::cout << "\n=== Testing Multi-Store Functionality ===" << std::endl;
+
+        // Get StoreManager instance
+        kvstore::StoreManager& manager = kvstore::StoreManager::instance();
+
+        // Test 1: Store isolation
+        std::cout << "\n--- Test 1: Store Isolation ---" << std::endl;
+        manager.put("userstore", "user1", "John Doe");
+        manager.put("sessionstore", "user1", "session123");
+        manager.put("userstore", "user2", "Jane Smith");
+
+        std::string user1_from_userstore = manager.get("userstore", "user1");
+        std::string user1_from_sessionstore = manager.get("sessionstore", "user1");
+
+        std::cout << "DEBUG: userstore.user1 = '" << user1_from_userstore << "'" << std::endl;
+        std::cout << "DEBUG: sessionstore.user1 = '" << user1_from_sessionstore << "'" << std::endl;
+
+        if(user1_from_userstore.find("John Doe") != std::string::npos &&
+            user1_from_sessionstore.find("session123") != std::string::npos) {
+            std::cout << kvspp::utils::ColorOutput::passMsg("Store isolation working correctly") << std::endl;
+            std::cout << "  userstore.user1: " << user1_from_userstore << std::endl;
+            std::cout << "  sessionstore.user1: " << user1_from_sessionstore << std::endl;
+        }
+        else {
+            std::cout << kvspp::utils::ColorOutput::failMsg("Store isolation failed!") << std::endl;
+        }
+
+        // Test 2: Multi-store persistence
+        std::cout << "\n--- Test 2: Multi-Store Persistence ---" << std::endl;
+        try {
+            manager.saveStore("userstore", "store/test_userstore.json");
+            manager.saveStore("sessionstore", "store/test_sessionstore.json");
+            std::cout << kvspp::utils::ColorOutput::passMsg("Successfully saved multiple stores") << std::endl;
+
+            // Clear all stores and reload
+            manager.clearAllStores();
+            std::cout << "Cleared all stores, now reloading..." << std::endl;
+
+            manager.loadStore("userstore", "store/test_userstore.json");
+            manager.loadStore("sessionstore", "store/test_sessionstore.json");
+
+            // Verify data after reload
+            std::string reloaded_user = manager.get("userstore", "user1");
+            std::string reloaded_session = manager.get("sessionstore", "user1");
+
+            std::cout << "DEBUG: reloaded userstore.user1 = '" << reloaded_user << "'" << std::endl;
+            std::cout << "DEBUG: reloaded sessionstore.user1 = '" << reloaded_session << "'" << std::endl;
+
+            if(reloaded_user.find("John Doe") != std::string::npos &&
+                reloaded_session.find("session123") != std::string::npos) {
+                std::cout << kvspp::utils::ColorOutput::passMsg("Multi-store persistence working correctly") << std::endl;
+            }
+            else {
+                std::cout << kvspp::utils::ColorOutput::failMsg("Multi-store persistence failed!") << std::endl;
+            }
+        }
+        catch(const std::exception& e) {
+            std::cout << kvspp::utils::ColorOutput::failMsg("Multi-store persistence error: " + std::string(e.what())) << std::endl;
+        }
+
+        // Test 3: Different Data Types Across Stores
+        std::cout << "\n--- Test 3: Different Values Across Stores ---" << std::endl;
+        // Clear stores first to reset TypeRegistry state for this test
+        manager.clearAllStores();
+
+        manager.put("config", "max_connections", "100");
+        manager.put("config", "debug_mode", "enabled");
+        manager.put("cache", "user_sessions", "45");
+        manager.put("cache", "active_connections", "23");
+
+        try {
+            std::string config_max = manager.get("config", "max_connections");
+            std::string cache_sessions = manager.get("cache", "user_sessions");
+            std::cout << kvspp::utils::ColorOutput::passMsg("Multi-store different values working") << std::endl;
+            std::cout << "  config.max_connections: " << config_max << std::endl;
+            std::cout << "  cache.user_sessions: " << cache_sessions << std::endl;
+        }
+        catch(const std::exception& e) {
+            std::cout << kvspp::utils::ColorOutput::failMsg("Multi-store values error: " + std::string(e.what())) << std::endl;
+        }
+
+        // Test 4: Error handling for non-existent stores/keys
+        std::cout << "\n--- Test 4: Error Handling ---" << std::endl;
+        try {
+            manager.get("nonexistent", "key");
+            std::cout << kvspp::utils::ColorOutput::failMsg("Should have thrown exception for non-existent store") << std::endl;
+        }
+        catch(const std::exception& e) {
+            std::cout << kvspp::utils::ColorOutput::passMsg("Correctly caught exception: " + std::string(e.what())) << std::endl;
+        }
+
+        try {
+            manager.get("config", "nonexistent_key");
+            std::cout << kvspp::utils::ColorOutput::failMsg("Should have thrown exception for non-existent key") << std::endl;
+        }
+        catch(const std::exception& e) {
+            std::cout << kvspp::utils::ColorOutput::passMsg("Correctly caught exception: " + std::string(e.what())) << std::endl;
+        }
+
+        // Test 5: Store removal
+        std::cout << "\n--- Test 5: Store Operations ---" << std::endl;
+        try {
+            manager.remove("config", "debug_mode");
+            manager.get("config", "debug_mode");  // Should fail
+            std::cout << kvspp::utils::ColorOutput::failMsg("Should have thrown exception after removal") << std::endl;
+        }
+        catch(const std::exception& e) {
+            std::cout << kvspp::utils::ColorOutput::passMsg("Key removal working correctly: " + std::string(e.what())) << std::endl;
+        }
+
+        std::cout << "\n=== Multi-Store Tests Completed Successfully ===" << std::endl;
     }
     catch(const kvspp::exceptions::KVStoreException& e) {
         std::cerr << "KV Store Error: " << e.what() << std::endl;
