@@ -9,6 +9,9 @@
 namespace kvspp {
     namespace core {
 
+        // Forward declaration
+        class TypeRegistry;
+
         using AttributeValue = std::variant<std::string, int, double, bool>;
         using AttributePair = std::pair<std::string, std::string>;
 
@@ -20,11 +23,16 @@ namespace kvspp {
         class ValueObject {
         private:
             std::unordered_map<std::string, AttributeValue> attributes_;
+            TypeRegistry* typeRegistry_;  // Reference to the store's TypeRegistry
 
         public:
-            // converts list of attribute pairs (string, string) to appropriate types
-            explicit ValueObject(const std::vector<AttributePair>& attributePairs);
+            // Constructor that accepts TypeRegistry reference
+            explicit ValueObject(TypeRegistry& typeRegistry);
 
+            // Constructor with attribute pairs and TypeRegistry reference
+            ValueObject(const std::vector<AttributePair>& attributePairs, TypeRegistry& typeRegistry);
+
+            // Default constructor (requires setTypeRegistry call before use)
             ValueObject() = default;
             // copy constructor and assignment operator
             ValueObject(const ValueObject& other) = default;
@@ -33,7 +41,12 @@ namespace kvspp {
             ValueObject(ValueObject&& other) noexcept = default;
             ValueObject& operator=(ValueObject&& other) noexcept = default;
             // Destructor
-            ~ValueObject() = default;            // Get an attribute value by name (returns nullptr if not found)
+            ~ValueObject() = default;
+
+            // Set TypeRegistry reference (for default constructed objects)
+            void setTypeRegistry(TypeRegistry& typeRegistry);
+
+            // Get an attribute value by name (returns nullptr if not found)
             const AttributeValue* getAttribute(const std::string& attributeName) const;
 
             // Set an attribute with type validation

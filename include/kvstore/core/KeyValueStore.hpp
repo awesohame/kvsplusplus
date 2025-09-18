@@ -6,6 +6,7 @@
 #include <mutex>
 #include <memory>
 #include "ValueObject.hpp"
+#include "TypeRegistry.hpp"
 
 namespace kvspp {
     namespace core {
@@ -18,6 +19,9 @@ namespace kvspp {
         private:
             // The main storage: key -> ValueObject
             std::unordered_map<std::string, std::unique_ptr<ValueObject>> store_;
+
+            // Per-store type registry for type consistency within this store
+            TypeRegistry typeRegistry_;
 
             // Mutex for thread safety
             mutable std::mutex mtx_;
@@ -107,6 +111,12 @@ namespace kvspp {
             * @throws KVStoreException if loading fails
             */
             void load(const std::string& filePath);
+
+            /**
+            * Get the TypeRegistry for this store
+            * @return Reference to the store's TypeRegistry
+            */
+            TypeRegistry& getTypeRegistry();
 
         private:
             /**

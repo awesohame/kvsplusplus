@@ -7,7 +7,11 @@
 
 namespace kvspp {
     namespace core {
-        ValueObject::ValueObject(const std::vector<AttributePair>& attributePairs) {
+        ValueObject::ValueObject(TypeRegistry& typeRegistry) : typeRegistry_(&typeRegistry) {
+        }
+
+        ValueObject::ValueObject(const std::vector<AttributePair>& attributePairs, TypeRegistry& typeRegistry)
+            : typeRegistry_(&typeRegistry) {
             for(const auto& pair : attributePairs) {
                 const std::string& key = pair.first;
                 const std::string& valueStr = pair.second;
@@ -16,11 +20,15 @@ namespace kvspp {
                 AttributeValue value = parseStringToAttributeValue(valueStr);
 
                 // Validate type against TypeRegistry
-                AttributeType valueType = TypeRegistry::getInstance().getTypeFromValue(value);
-                TypeRegistry::getInstance().validateAndRegisterType(key, valueType);
+                AttributeType valueType = TypeRegistry::getTypeFromValue(value);
+                typeRegistry_->validateAndRegisterType(key, valueType);
 
                 attributes_[key] = value;
             }
+        }
+
+        void ValueObject::setTypeRegistry(TypeRegistry& typeRegistry) {
+            typeRegistry_ = &typeRegistry;
         }        const AttributeValue* ValueObject::getAttribute(const std::string& attributeName) const {
             auto it = attributes_.find(attributeName);
             if(it != attributes_.end()) {
@@ -30,26 +38,26 @@ namespace kvspp {
         }
 
         void ValueObject::setAttribute(const std::string& attributeName, const std::string& value) {
-            AttributeType valueType = TypeRegistry::getInstance().getTypeFromValue(AttributeValue(value));
-            TypeRegistry::getInstance().validateAndRegisterType(attributeName, valueType);
+            AttributeType valueType = TypeRegistry::getTypeFromValue(AttributeValue(value));
+            typeRegistry_->validateAndRegisterType(attributeName, valueType);
             attributes_[attributeName] = value;
         }
 
         void ValueObject::setAttribute(const std::string& attributeName, int value) {
-            AttributeType valueType = TypeRegistry::getInstance().getTypeFromValue(AttributeValue(value));
-            TypeRegistry::getInstance().validateAndRegisterType(attributeName, valueType);
+            AttributeType valueType = TypeRegistry::getTypeFromValue(AttributeValue(value));
+            typeRegistry_->validateAndRegisterType(attributeName, valueType);
             attributes_[attributeName] = value;
         }
 
         void ValueObject::setAttribute(const std::string& attributeName, double value) {
-            AttributeType valueType = TypeRegistry::getInstance().getTypeFromValue(AttributeValue(value));
-            TypeRegistry::getInstance().validateAndRegisterType(attributeName, valueType);
+            AttributeType valueType = TypeRegistry::getTypeFromValue(AttributeValue(value));
+            typeRegistry_->validateAndRegisterType(attributeName, valueType);
             attributes_[attributeName] = value;
         }
 
         void ValueObject::setAttribute(const std::string& attributeName, bool value) {
-            AttributeType valueType = TypeRegistry::getInstance().getTypeFromValue(AttributeValue(value));
-            TypeRegistry::getInstance().validateAndRegisterType(attributeName, valueType);
+            AttributeType valueType = TypeRegistry::getTypeFromValue(AttributeValue(value));
+            typeRegistry_->validateAndRegisterType(attributeName, valueType);
             attributes_[attributeName] = value;
         }
 

@@ -65,8 +65,8 @@ int main(int argc, char* argv[]) {
             }
         }
 
-// Create CLI with the correct store file after parsing all arguments
-        kvspp::cli::CLI cli(storeFile);
+        // Create CLI with new StoreManager-based implementation
+        kvspp::cli::CLI cli;
 
         // Configure CLI
         cli.setVerboseMode(verbose);

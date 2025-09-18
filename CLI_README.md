@@ -17,21 +17,22 @@ The KVS++ project now includes comprehensive CLI tools for interacting with the 
 - `-f, --file FILE`: Use FILE as the store file (default: store/store.json)
 - `--no-autosave`: Disable automatic saving after command
 
-#### Examples
+
+#### Examples (with storeToken)
 ```powershell
-# Store a new entry
-.\build\bin\Release\kvspp-single-cmd.exe put user1 name:John age:25 active:true
+# Store a new entry in a specific store
+.\build\bin\Release\kvspp-single-cmd.exe put mystore user1 name:John age:25 active:true
 
-# Get an entry
-.\build\bin\Release\kvspp-single-cmd.exe get user1
+# Get an entry from a store
+.\build\bin\Release\kvspp-single-cmd.exe get mystore user1
 
-# Search for entries
-.\build\bin\Release\kvspp-single-cmd.exe search age 25
+# Search for entries in a store
+.\build\bin\Release\kvspp-single-cmd.exe search mystore age 25
 
-# JSON output for scripting
-.\build\bin\Release\kvspp-single-cmd.exe --json keys
+# JSON output for scripting (storeToken required)
+.\build\bin\Release\kvspp-single-cmd.exe --json keys mystore
 
-# Use custom store file
+# Use custom store file (legacy, maps to storeToken)
 .\build\bin\Release\kvspp-single-cmd.exe -f mystore.json keys
 ```
 
@@ -75,21 +76,25 @@ Creates sample e-commerce course data and user profiles, demonstrates all core f
 
 ## Available Commands
 
-### Data Operations
-- `get <key>` - Get value for a key
-- `put <key> <attr:val> ...` - Store key with attributes
-- `delete <key>` - Delete a key  
-- `search <attr> <value>` - Find keys by attribute
 
-### Store Operations
-- `keys` - List all keys
-- `clear` - Clear all data
-- `stats` - Show store statistics
-- `inspect <key>` - Detailed view of a key
+### Data Operations (storeToken required)
+- `get <storeToken> <key>` - Get value for a key in a store
+- `put <storeToken> <key> <attr:val> ...` - Store key with attributes in a store
+- `delete <storeToken> <key>` - Delete a key from a store
+- `search <storeToken> <attr> <value>` - Find keys by attribute in a store
 
-### File Operations
-- `save [filename]` - Save store to file
-- `load [filename]` - Load store from file
+
+### Store Operations (storeToken required)
+- `keys <storeToken>` - List all keys in a store
+- `clear <storeToken>` - Clear all data in a store
+- `stats <storeToken>` - Show store statistics for a store
+- `inspect <storeToken> <key>` - Detailed view of a key in a store
+
+
+### File Operations (storeToken required)
+- `save <storeToken> [filename]` - Save a store to file
+- `load <storeToken> [filename]` - Load a store from file
+
 
 ### Utility
 - `help` - Show command help
@@ -124,30 +129,32 @@ Creates sample e-commerce course data and user profiles, demonstrates all core f
 
 ## Advanced Usage Examples
 
-### Scripting with JSON Output
-```powershell
-# Get all keys as JSON array
-$keys = .\build\bin\Release\kvspp-single-cmd.exe --json keys | ConvertFrom-Json
 
-# Get specific entry as JSON object
-$user = .\build\bin\Release\kvspp-single-cmd.exe --json get user1 | ConvertFrom-Json
+### Scripting with JSON Output (storeToken required)
+```powershell
+# Get all keys as JSON array from a store
+$keys = .\build\bin\Release\kvspp-single-cmd.exe --json keys mystore | ConvertFrom-Json
+
+# Get specific entry as JSON object from a store
+$user = .\build\bin\Release\kvspp-single-cmd.exe --json get mystore user1 | ConvertFrom-Json
 Write-Host "User age: $($user.age)"
 
-# Search and process results
-$results = .\build\bin\Release\kvspp-single-cmd.exe --json search active true | ConvertFrom-Json
+# Search and process results in a store
+$results = .\build\bin\Release\kvspp-single-cmd.exe --json search mystore active true | ConvertFrom-Json
 Write-Host "Found $($results.Length) active users"
 ```
 
-### Batch Operations
-```powershell
-# Load demo data
-.\build\bin\Release\kvspp-single-cmd.exe load store/demo_store.json
 
-# Process all premium users
-$premiumUsers = .\build\bin\Release\kvspp-single-cmd.exe --json search premium true | ConvertFrom-Json
+### Batch Operations (storeToken required)
+```powershell
+# Load demo data into a store
+.\build\bin\Release\kvspp-single-cmd.exe load mystore store/demo_store.json
+
+# Process all premium users in a store
+$premiumUsers = .\build\bin\Release\kvspp-single-cmd.exe --json search mystore premium true | ConvertFrom-Json
 foreach ($user in $premiumUsers) {
-    $userData = .\build\bin\Release\kvspp-single-cmd.exe --json get $user | ConvertFrom-Json
-    Write-Host "Premium user: $($userData.name), Age: $($userData.age)"
+  $userData = .\build\bin\Release\kvspp-single-cmd.exe --json get mystore $user | ConvertFrom-Json
+  Write-Host "Premium user: $($userData.name), Age: $($userData.age)"
 }
 ```
 

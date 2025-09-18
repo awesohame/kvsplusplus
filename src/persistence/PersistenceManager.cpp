@@ -147,8 +147,8 @@ namespace kvspp {
         }
 
         // JSON deserialization helpers
-        core::ValueObject PersistenceManager::jsonToValueObject(const std::string& jsonStr) const {
-            core::ValueObject obj;
+        core::ValueObject PersistenceManager::jsonToValueObject(const std::string& jsonStr, core::TypeRegistry& typeRegistry) const {
+            core::ValueObject obj(typeRegistry);
 
             std::string content = jsonStr;
             // Remove outer braces
@@ -398,7 +398,7 @@ namespace kvspp {
                     std::string objectJson = content.substr(valueStart, valueEnd - valueStart);
 
                     // Parse the object and add to store
-                    core::ValueObject obj = jsonToValueObject(objectJson);
+                    core::ValueObject obj = jsonToValueObject(objectJson, store.getTypeRegistry());
                     store.put(unescapeJsonString(key), obj);
                 }
 

@@ -61,23 +61,23 @@ int main(int argc, char* argv[]) {
                 std::cout << "  --no-autosave     Disable automatic saving after command" << std::endl;
                 std::cout << std::endl;
                 std::cout << "Commands:" << std::endl;
-                std::cout << "  get <key>                     Get value for a key" << std::endl;
-                std::cout << "  put <key> <attr:val> ...      Store key with attributes" << std::endl;
-                std::cout << "  delete <key>                  Delete a key" << std::endl;
-                std::cout << "  search <attr> <value>         Find keys by attribute" << std::endl;
-                std::cout << "  keys                          List all keys" << std::endl;
-                std::cout << "  clear                         Clear all data" << std::endl;
-                std::cout << "  save [filename]               Save store to file" << std::endl;
-                std::cout << "  load [filename]               Load store from file" << std::endl;
-                std::cout << "  stats                         Show store statistics" << std::endl;
-                std::cout << "  inspect <key>                 Detailed view of a key" << std::endl;
-                std::cout << "  help                          Show command help" << std::endl;
+                std::cout << "  get <storeToken> <key>                        Get value for a key" << std::endl;
+                std::cout << "  put <storeToken> <key> <attr:val> ...         Store key with attributes" << std::endl;
+                std::cout << "  delete <storeToken> <key>                     Delete a key" << std::endl;
+                std::cout << "  search <storeToken> <attr> <value>            Find keys by attribute" << std::endl;
+                std::cout << "  keys <storeToken>                             List all keys" << std::endl;
+                std::cout << "  clear <storeToken>                            Clear all data in store" << std::endl;
+                std::cout << "  save <storeToken> [filename]                  Save store to file" << std::endl;
+                std::cout << "  load <storeToken> [filename]                  Load store from file" << std::endl;
+                std::cout << "  stats <storeToken>                            Show store statistics" << std::endl;
+                std::cout << "  inspect <storeToken> <key>                    Detailed view of a key" << std::endl;
+                std::cout << "  help                                          Show command help" << std::endl;
                 std::cout << std::endl;
                 std::cout << "Examples:" << std::endl;
-                std::cout << "  " << argv[0] << " put user1 name:John age:25 active:true" << std::endl;
-                std::cout << "  " << argv[0] << " get user1" << std::endl;
-                std::cout << "  " << argv[0] << " search age 25" << std::endl;
-                std::cout << "  " << argv[0] << " --json keys" << std::endl;
+                std::cout << "  " << argv[0] << " put store1 user1 name:John age:25 active:true" << std::endl;
+                std::cout << "  " << argv[0] << " get store1 user1" << std::endl;
+                std::cout << "  " << argv[0] << " search store1 age 25" << std::endl;
+                std::cout << "  " << argv[0] << " --json keys store1" << std::endl;
                 return 0;
             }
             else {
@@ -90,8 +90,8 @@ int main(int argc, char* argv[]) {
             return 1;
         }
 
-        // Create CLI with the correct store file after parsing all arguments
-        kvspp::cli::CLI cli(storeFile);
+        // Create CLI with new StoreManager-based implementation
+        kvspp::cli::CLI cli;
 
         // Configure CLI
         cli.setVerboseMode(verbose);

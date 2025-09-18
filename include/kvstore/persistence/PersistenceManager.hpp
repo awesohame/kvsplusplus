@@ -45,7 +45,7 @@ namespace kvspp {
             std::string escapeJsonString(const std::string& str) const;
 
             // JSON deserialization helpers
-            core::ValueObject jsonToValueObject(const std::string& jsonStr) const;
+            core::ValueObject jsonToValueObject(const std::string& jsonStr, core::TypeRegistry& typeRegistry) const;
             core::AttributeValue parseJsonValue(const std::string& jsonValue) const;
             std::string unescapeJsonString(const std::string& str) const;
 
