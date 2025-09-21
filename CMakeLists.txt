@@ -21,6 +21,7 @@ file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS
     src/persistence/*.cpp
     src/utils/*.cpp
     src/cli/*.cpp
+    src/TCPServer.cpp
 )
 
 # Create a static library for the core functionality
@@ -42,8 +43,12 @@ target_link_libraries(kvspp-cli kvstore)
 add_executable(kvspp-demo src/demo_main.cpp)
 target_link_libraries(kvspp-demo kvstore)
 
+# Executable 5: TCP server
+add_executable(kvspp-tcp src/tcp_main.cpp)
+target_link_libraries(kvspp-tcp kvstore)
+
 # Set up linking for all executables
-set(ALL_TARGETS kvspp-test kvspp-single-cmd kvspp-cli kvspp-demo)
+set(ALL_TARGETS kvspp-test kvspp-single-cmd kvspp-cli kvspp-demo kvspp-tcp)
 
 foreach(target ${ALL_TARGETS})
     # make sure MinGW doesn't complain about missing entry points
