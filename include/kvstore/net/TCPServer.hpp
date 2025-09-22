@@ -5,14 +5,14 @@
 #include <atomic>
 #include <string>
 #include <memory>
-#include "kvstore/core/KeyValueStore.hpp"
+#include "kvstore/core/StoreManager.hpp"
 
 namespace kvspp {
     namespace net {
 
         class TCPServer {
         public:
-            TCPServer(kvspp::core::KeyValueStore& store, int port = 5555);
+            TCPServer(int port = 5555);
             ~TCPServer();
 
             void start();
@@ -22,8 +22,9 @@ namespace kvspp {
         private:
             void run();
             void handleClient(int clientSock);
+            std::string handleCommand(const std::string& line, std::string& selectedToken, bool& autosave);
+            static std::vector<std::string> splitCommand(const std::string& line);
 
-            kvspp::core::KeyValueStore& store_;
             int port_;
             std::thread serverThread_;
             std::atomic<bool> running_;

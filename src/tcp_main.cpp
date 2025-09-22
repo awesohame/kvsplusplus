@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 #include "kvstore/core/KeyValueStore.hpp"
-#include "kvstore/TCPServer.hpp"
+#include "kvstore/net/TCPServer.hpp"
 
 /**
  * TCP server main entry point
@@ -12,8 +12,7 @@ int main(int argc, char* argv[]) {
     if(argc > 1) {
         port = std::stoi(argv[1]);
     }
-    kvspp::core::KeyValueStore store;
-    kvspp::net::TCPServer server(store, port);
+    kvspp::net::TCPServer server(port);
     std::cout << "KVS++ TCP server listening on port " << port << std::endl;
     server.start();
     // Wait for user to terminate

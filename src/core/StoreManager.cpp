@@ -40,17 +40,26 @@ namespace kvstore {
     }
 
 
+
     void StoreManager::saveStore(const storeToken& token, const std::string& filename) const {
         // Lock for thread safety
         std::lock_guard<std::mutex> lock(mutex_);
         auto it = stores_.find(token);
         if(it == stores_.end()) throw std::runtime_error("Store not found");
-        it->second.save(filename);
+        std::string fname = filename;
+        if(fname.size() < 5 || fname.substr(fname.size() - 5) != ".json") {
+            fname += ".json";
+        }
+        it->second.save(fname);
     }
 
     void StoreManager::loadStore(const storeToken& token, const std::string& filename) {
         std::lock_guard<std::mutex> lock(mutex_);
-        stores_[token].load(filename);
+        std::string fname = filename;
+        if(fname.size() < 5 || fname.substr(fname.size() - 5) != ".json") {
+            fname += ".json";
+        }
+        stores_[token].load(fname);
     }
 
 } // namespace kvstore

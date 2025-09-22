@@ -21,7 +21,7 @@ file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS
     src/persistence/*.cpp
     src/utils/*.cpp
     src/cli/*.cpp
-    src/TCPServer.cpp
+    src/net/TCPServer.cpp
 )
 
 # Create a static library for the core functionality
@@ -60,6 +60,11 @@ foreach(target ${ALL_TARGETS})
     if (UNIX OR MINGW)
         find_package(Threads REQUIRED)
         target_link_libraries(${target} Threads::Threads)
+    endif()
+
+    # Link Winsock2 on Windows
+    if (WIN32)
+        target_link_libraries(${target} ws2_32)
     endif()
 
     # Set compile warnings

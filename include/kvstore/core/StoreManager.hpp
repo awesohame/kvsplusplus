@@ -1,3 +1,4 @@
+
 #pragma once
 #include <unordered_map>
 #include <string>
@@ -7,7 +8,6 @@
 namespace kvspp { namespace core { class KeyValueStore; } }
 
 namespace kvstore {
-
 
     class StoreManager {
     public:
@@ -36,6 +36,9 @@ namespace kvstore {
 
         // Clear all stores (for testing/demo)
         void clearAllStores();
+
+        // Normalize filename: append .json if missing, add store/ if not absolute
+        static std::string normalizeFilename(const std::string& filename);
 
     private:
         StoreManager() = default;
