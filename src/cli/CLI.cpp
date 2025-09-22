@@ -190,10 +190,10 @@ namespace kvspp {
                 // Auto-save if enabled
                 if(autoSave_) {
                     try {
-                        std::string filename = "store/" + storeToken + ".json";
-                        manager_.saveStore(storeToken, filename);
+                        std::string fname = storeToken + ".json";
+                        manager_.saveStore(storeToken, fname);
                         if(verboseMode_) {
-                            printInfo("Auto-saved store '" + storeToken + "' to: " + filename);
+                            printInfo("Auto-saved store '" + storeToken + "' to: " + fname);
                         }
                     }
                     catch(const std::exception& e) {
@@ -230,10 +230,10 @@ namespace kvspp {
                 // Auto-save if enabled
                 if(autoSave_) {
                     try {
-                        std::string filename = "store/" + storeToken + ".json";
-                        manager_.saveStore(storeToken, filename);
+                        std::string fname = storeToken + ".json";
+                        manager_.saveStore(storeToken, fname);
                         if(verboseMode_) {
-                            printInfo("Auto-saved store '" + storeToken + "' to: " + filename);
+                            printInfo("Auto-saved store '" + storeToken + "' to: " + fname);
                         }
                     }
                     catch(const std::exception& e) {
@@ -287,7 +287,7 @@ namespace kvspp {
             }
 
             const std::string& storeToken = args[1];
-            std::string filename = args.size() == 3 ? ("store/" + args[2]) : ("store/" + storeToken + ".json");
+            std::string filename = args.size() == 3 ? args[2] : (storeToken + ".json");
 
             try {
                 // Ensure store directory exists
@@ -319,7 +319,7 @@ namespace kvspp {
             }
 
             const std::string& storeToken = args[1];
-            std::string filename = args.size() == 3 ? ("store/" + args[2]) : ("store/" + storeToken + ".json");
+            std::string filename = args.size() == 3 ? args[2] : (storeToken + ".json");
 
             try {
                 manager_.loadStore(storeToken, filename);

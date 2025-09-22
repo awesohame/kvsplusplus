@@ -198,10 +198,6 @@ std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::s
     else if(cmd == "SAVE") {
         if(tokens.size() != 2) return "ERROR Usage: SAVE <filename>\n";
         std::string filename = tokens[1];
-        // Always use project root's store/ directory for relative paths
-        if(!(filename.size() > 1 && (filename[1] == ':' || filename[0] == '/' || filename[0] == '\\'))) {
-            filename = "../../store/" + filename;
-        }
         try {
             kvstore::StoreManager::instance().saveStore(selectedToken, filename);
             return "OK\n";
@@ -213,9 +209,6 @@ std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::s
     else if(cmd == "LOAD") {
         if(tokens.size() != 2) return "ERROR Usage: LOAD <filename>\n";
         std::string filename = tokens[1];
-        if(!(filename.size() > 1 && (filename[1] == ':' || filename[0] == '/' || filename[0] == '\\'))) {
-            filename = "../../store/" + filename;
-        }
         try {
             kvstore::StoreManager::instance().loadStore(selectedToken, filename);
             return "OK\n";
