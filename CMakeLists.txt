@@ -27,28 +27,16 @@ file(GLOB_RECURSE LIB_SOURCES CONFIGURE_DEPENDS
 # Create a static library for the core functionality
 add_library(kvstore STATIC ${LIB_SOURCES})
 
-# Executable 1: Test suite entry point
-add_executable(kvspp-test src/tests_main.cpp)
-target_link_libraries(kvspp-test kvstore)
-
-# Executable 2: Single command CLI 
-add_executable(kvspp-single-cmd src/single_cmd_main.cpp)
-target_link_libraries(kvspp-single-cmd kvstore)
-
-# Executable 3: Interactive CLI
+# Executable 1: Interactive CLI
 add_executable(kvspp-cli src/cli_main.cpp)
 target_link_libraries(kvspp-cli kvstore)
 
-# Executable 4: Demo application
-add_executable(kvspp-demo src/demo_main.cpp)
-target_link_libraries(kvspp-demo kvstore)
-
-# Executable 5: TCP server
+# Executable 2: TCP server
 add_executable(kvspp-tcp src/tcp_main.cpp)
 target_link_libraries(kvspp-tcp kvstore)
 
 # Set up linking for all executables
-set(ALL_TARGETS kvspp-test kvspp-single-cmd kvspp-cli kvspp-demo kvspp-tcp)
+set(ALL_TARGETS kvspp-cli kvspp-tcp)
 
 foreach(target ${ALL_TARGETS})
     # make sure MinGW doesn't complain about missing entry points

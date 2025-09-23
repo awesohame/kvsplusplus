@@ -167,7 +167,8 @@ std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::s
         if(tokens.size() != 2) return "ERROR Usage: GET <key>\n";
         const kvspp::core::ValueObject* val = store.get(tokens[1]);
         if(!val) return "NOT_FOUND\n";
-        return "VALUE " + val->toString() + "\n";
+        // Return only the value string, not the 'value' key
+        return "VALUE " + val->getValueString() + "\n";
     }
     else if(cmd == "SET") {
         if(tokens.size() < 3) return "ERROR Usage: SET <key> <value>\n";

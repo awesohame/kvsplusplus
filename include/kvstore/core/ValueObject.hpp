@@ -21,6 +21,9 @@ namespace kvspp {
          * and a typed value (string, int, double, or bool).
          */
         class ValueObject {
+        public:
+            // Returns the value as a string (for flat value use)
+            std::string getValueString() const;
         private:
             std::unordered_map<std::string, AttributeValue> attributes_;
             TypeRegistry* typeRegistry_;  // Reference to the store's TypeRegistry

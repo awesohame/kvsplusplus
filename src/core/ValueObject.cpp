@@ -128,6 +128,19 @@ namespace kvspp {
             // default is string
             return valueStr;
         }
-
-    }
-}
+        std::string ValueObject::getValueString() const {
+            auto it = attributes_.find("value");
+            if(it == attributes_.end()) return "";
+            // Handle all supported types
+            if(std::holds_alternative<std::string>(it->second))
+                return std::get<std::string>(it->second);
+            if(std::holds_alternative<int>(it->second))
+                return std::to_string(std::get<int>(it->second));
+            if(std::holds_alternative<double>(it->second))
+                return std::to_string(std::get<double>(it->second));
+            if(std::holds_alternative<bool>(it->second))
+                return std::get<bool>(it->second) ? "true" : "false";
+            return "";
+        }
+    } // namespace core
+} // namespace kvspp
