@@ -30,14 +30,11 @@ namespace kvspp {
                     if(valueObj) {
                         json << "    \"" << escapeJsonString(key) << "\": "
                             << valueObjectToJson(*valueObj);
-
-                        if(i < keys.size() - 1) {
-                            json << ",";
-                        }
-                        json << "\n";
+                        json << ",\n";
                     }
                 }
-
+                // Write autosave field (assume store.hasAutosave() and store.getAutosave())
+                json << "    \"autosave\": " << (store.hasAutosave() ? (store.getAutosave() ? "true" : "false") : "false") << "\n";
                 json << "  }\n";
                 json << "}";
 
@@ -343,7 +340,7 @@ namespace kvspp {
             if(content.front() == '{') content.erase(0, 1);
             if(content.back() == '}') content.pop_back();
 
-            // Parse each key-value pair
+            // Parse each key-value pair and autosave field
             size_t pos = 0;
             while(pos < content.length()) {
                 // Find the start of a key
@@ -359,6 +356,23 @@ namespace kvspp {
                 // Find the colon after the key
                 size_t colonPos = content.find(':', keyEnd);
                 if(colonPos == std::string::npos) break;
+
+                // Check for autosave field
+                if(key == "autosave") {
+                    // Find value (true/false)
+                    size_t valStart = content.find_first_not_of(" ", colonPos + 1);
+                    if(valStart != std::string::npos) {
+                        bool autosave = false;
+                        if(content.compare(valStart, 4, "true") == 0) autosave = true;
+                        else if(content.compare(valStart, 5, "false") == 0) autosave = false;
+                        store.setAutosave(autosave);
+                    }
+                    // Move to next field
+                    pos = content.find(',', colonPos);
+                    if(pos == std::string::npos) break;
+                    ++pos;
+                    continue;
+                }
 
                 // Find the start of the value (should be an object starting with '{')
                 size_t valueStart = content.find('{', colonPos);

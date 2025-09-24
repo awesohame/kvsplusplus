@@ -71,9 +71,19 @@ namespace kvspp {
 #ifdef _WIN32
                 int clientLen = sizeof(clientAddr);
                 int clientSock = accept(serverSock_, (struct sockaddr*)&clientAddr, &clientLen);
+                if(clientSock != INVALID_SOCKET) {
+                    // Enable keepalive on Windows
+                    BOOL optval = TRUE;
+                    setsockopt(clientSock, SOL_SOCKET, SO_KEEPALIVE, (char*)&optval, sizeof(optval));
+                }
 #else
                 socklen_t clientLen = sizeof(clientAddr);
                 int clientSock = accept(serverSock_, (struct sockaddr*)&clientAddr, &clientLen);
+                if(clientSock >= 0) {
+                    // Enable keepalive on Linux/Unix
+                    int optval = 1;
+                    setsockopt(clientSock, SOL_SOCKET, SO_KEEPALIVE, &optval, sizeof(optval));
+                }
 #endif
                 if(clientSock < 0) continue;
                 std::thread(&TCPServer::handleClient, this, clientSock).detach();
@@ -91,7 +101,6 @@ namespace kvspp {
             char buffer[BUFFER_SIZE];
             std::string partial;
             std::string selectedToken;
-            bool autosave = true;
             while(true) {
 #ifdef _WIN32
                 int bytes = recv(clientSock, buffer, BUFFER_SIZE - 1, 0);
@@ -107,7 +116,7 @@ namespace kvspp {
                     partial.erase(0, pos + 1);
                     // Trim trailing \r if present
                     if(!line.empty() && line.back() == '\r') line.pop_back();
-                    std::string response = handleCommand(line, selectedToken, autosave);
+                    std::string response = handleCommand(line, selectedToken);
                     send(clientSock, response.c_str(), response.size(), 0);
                     if(line == "QUIT") return;
                 }
@@ -141,7 +150,7 @@ std::vector<std::string> kvspp::net::TCPServer::splitCommand(const std::string& 
     return tokens;
 }
 
-std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::string& selectedToken, bool& autosave) {
+std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::string& selectedToken) {
     auto tokens = splitCommand(line);
     if(tokens.empty()) return "ERROR Empty command\n";
     std::string cmd = tokens[0];
@@ -155,8 +164,20 @@ std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::s
         if(tokens.size() != 2) return "ERROR Usage: AUTOSAVE ON|OFF\n";
         std::string val = tokens[1];
         for(auto& c : val) c = toupper(c);
-        if(val == "ON") { autosave = true; return "OK\n"; }
-        else if(val == "OFF") { autosave = false; return "OK\n"; }
+        if(selectedToken.empty()) return "ERROR No store selected. Use SELECT <storetoken> first.\n";
+        auto& store = kvstore::StoreManager::instance().getStore(selectedToken);
+        if(val == "ON") {
+            store.setAutosave(true);
+            // Save the store immediately when autosave is enabled
+            try {
+                kvstore::StoreManager::instance().saveStore(selectedToken, selectedToken + ".json");
+            }
+            catch(const std::exception& e) {
+                return std::string("ERROR Autosave (initial save) failed: ") + e.what() + "\n";
+            }
+            return "OK\n";
+        }
+        else if(val == "OFF") { store.setAutosave(false); return "OK\n"; }
         else return "ERROR Usage: AUTOSAVE ON|OFF\n";
     }
     if(selectedToken.empty()) {
@@ -173,7 +194,7 @@ std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::s
     else if(cmd == "SET") {
         if(tokens.size() < 3) return "ERROR Usage: SET <key> <value>\n";
         store.put(tokens[1], { {"value", tokens[2]} });
-        if(autosave) {
+        if(store.getAutosave()) {
             try {
                 kvstore::StoreManager::instance().saveStore(selectedToken, selectedToken + ".json");
             }
@@ -186,7 +207,7 @@ std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::s
     else if(cmd == "DELETE") {
         if(tokens.size() != 2) return "ERROR Usage: DELETE <key>\n";
         bool removed = store.deleteKey(tokens[1]);
-        if(autosave) {
+        if(store.getAutosave()) {
             try {
                 kvstore::StoreManager::instance().saveStore(selectedToken, selectedToken + ".json");
             }
@@ -217,6 +238,15 @@ std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::s
         catch(const std::exception& e) {
             return std::string("ERROR Load failed: ") + e.what() + "\n";
         }
+    }
+    else if(cmd == "KEYS") {
+        auto keyList = store.keys();
+        std::string response = "KEYS";
+        for(const auto& k : keyList) {
+            response += " " + k;
+        }
+        response += "\n";
+        return response;
     }
     else if(cmd == "QUIT") {
         return "OK\n";

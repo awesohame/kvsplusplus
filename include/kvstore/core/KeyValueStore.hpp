@@ -16,6 +16,22 @@ namespace kvspp {
         * Keys are strings, values are ValueObjects containing typed attributes.
         */
         class KeyValueStore {
+        public:
+            /**
+            * Set autosave for this store
+            */
+            void setAutosave(bool enabled);
+
+            /**
+            * Get autosave for this store
+            */
+            bool getAutosave() const;
+
+            /**
+            * For compatibility with persistence logic
+            */
+            bool hasAutosave() const { return true; }
+
         private:
             // The main storage: key -> ValueObject
             std::unordered_map<std::string, std::unique_ptr<ValueObject>> store_;
@@ -23,8 +39,25 @@ namespace kvspp {
             // Per-store type registry for type consistency within this store
             TypeRegistry typeRegistry_;
 
+            // Autosave flag for this store
+            bool autosave_ = false;
+
             // Mutex for thread safety
             mutable std::mutex mtx_;
+            /**
+            * Set autosave for this store
+            */
+            // void setAutosave(bool enabled);
+
+            // /**
+            // * Get autosave for this store
+            // */
+            // bool getAutosave() const;
+
+            // /**
+            // * For compatibility with persistence logic
+            // */
+            // bool hasAutosave() const { return true; }
 
         public:
             // Constructor Destructor

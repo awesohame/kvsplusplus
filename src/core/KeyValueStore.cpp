@@ -7,6 +7,15 @@
 
 namespace kvspp {
     namespace core {
+        void KeyValueStore::setAutosave(bool enabled) {
+            std::lock_guard<std::mutex> lock(mtx_);
+            autosave_ = enabled;
+        }
+
+        bool KeyValueStore::getAutosave() const {
+            std::lock_guard<std::mutex> lock(mtx_);
+            return autosave_;
+        }
 
         const ValueObject* KeyValueStore::get(const std::string& key) const {
             std::lock_guard<std::mutex> lock(mtx_);

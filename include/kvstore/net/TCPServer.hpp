@@ -22,7 +22,7 @@ namespace kvspp {
         private:
             void run();
             void handleClient(int clientSock);
-            std::string handleCommand(const std::string& line, std::string& selectedToken, bool& autosave);
+            std::string handleCommand(const std::string& line, std::string& selectedToken);
             static std::vector<std::string> splitCommand(const std::string& line);
 
             int port_;
