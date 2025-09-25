@@ -1,5 +1,7 @@
 #include "kvstore/net/TCPServer.hpp"
 #include <iostream>
+#include <sstream>
+#include <sstream>
 #include <cstring>
 #ifdef _WIN32
 #include <winsock2.h>
@@ -166,9 +168,16 @@ std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::s
         for(auto& c : val) c = toupper(c);
         if(selectedToken.empty()) return "ERROR No store selected. Use SELECT <storetoken> first.\n";
         auto& store = kvstore::StoreManager::instance().getStore(selectedToken);
+        bool statusSaved = false;
         if(val == "ON") {
             store.setAutosave(true);
-            // Save the store immediately when autosave is enabled
+            statusSaved = true;
+        }
+        else if(val == "OFF") {
+            store.setAutosave(false);
+            statusSaved = true;
+        }
+        if(statusSaved) {
             try {
                 kvstore::StoreManager::instance().saveStore(selectedToken, selectedToken + ".json");
             }
@@ -177,7 +186,6 @@ std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::s
             }
             return "OK\n";
         }
-        else if(val == "OFF") { store.setAutosave(false); return "OK\n"; }
         else return "ERROR Usage: AUTOSAVE ON|OFF\n";
     }
     if(selectedToken.empty()) {
@@ -247,6 +255,33 @@ std::string kvspp::net::TCPServer::handleCommand(const std::string& line, std::s
         }
         response += "\n";
         return response;
+    }
+    else if(cmd == "JSON") {
+     // Return the stringified JSON of the current selected store
+        try {
+            std::ostringstream json;
+            json << "{";
+            json << "\"store\": {";
+            auto keys = store.keys();
+            size_t count = 0;
+            size_t total = keys.size();
+            for(size_t i = 0; i < total; ++i) {
+                const auto& key = keys[i];
+                const auto* valueObj = store.get(key);
+                if(valueObj) {
+                    if(count > 0) json << ",";
+                    json << "\"" << key << "\":{\"value\":\"" << valueObj->getValueString() << "\"}";
+                    ++count;
+                }
+            }
+            if(count > 0) json << ",";
+            json << "\"autosave\":" << (store.hasAutosave() ? (store.getAutosave() ? "true" : "false") : "false");
+            json << "}}";
+            return json.str() + "\n";
+        }
+        catch(const std::exception& e) {
+            return std::string("ERROR JSON failed: ") + e.what() + "\n";
+        }
     }
     else if(cmd == "QUIT") {
         return "OK\n";
